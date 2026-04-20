@@ -10,9 +10,9 @@ export function ReviewSkillsTab({ studentId }: { studentId: string }) {
   const { allSkillRecords, updateSkillRecord } = useAdminData();
   const records = allSkillRecords.filter(s => s.studentId === studentId);
 
-  const handleApprove = (id: string) => {
+  const handleApprove = (id: string, feedback: string) => {
     toast.success("Skill record approved");
-    updateSkillRecord(id, { status: 'approved' });
+    updateSkillRecord(id, { status: 'approved', principalFeedback: feedback });
   };
 
   const handleRequestChanges = (id: string, feedback: string) => {
@@ -61,7 +61,7 @@ export function ReviewSkillsTab({ studentId }: { studentId: string }) {
              {(record.status === 'submitted' || record.status === 'changes-requested') && (
                <div className="bg-slate-50 p-4 border-t flex justify-end">
                  <ApprovalActions 
-                   onApprove={() => handleApprove(record.id)}
+                   onApprove={(fb) => handleApprove(record.id, fb)}
                    onRequestChanges={(fb) => handleRequestChanges(record.id, fb)}
                  />
                </div>

@@ -10,9 +10,9 @@ export function ReviewEthicsApplicationTab({ studentId }: { studentId: string })
   const { allEthicsScenarios, updateEthicsScenario } = useAdminData();
   const scenarios = allEthicsScenarios.filter(s => s.studentId === studentId);
 
-  const handleApprove = (id: string) => {
+  const handleApprove = (id: string, feedback: string) => {
     toast.success("Ethics scenario approved");
-    updateEthicsScenario(id, { status: 'approved' });
+    updateEthicsScenario(id, { status: 'approved', principalFeedback: feedback });
   };
 
   const handleRequestChanges = (id: string, feedback: string) => {
@@ -83,7 +83,7 @@ export function ReviewEthicsApplicationTab({ studentId }: { studentId: string })
              {(scenario.status === 'submitted' || scenario.status === 'changes-requested') && (
                <div className="bg-slate-50 p-4 border-t flex justify-end">
                  <ApprovalActions 
-                   onApprove={() => handleApprove(scenario.id)}
+                   onApprove={(fb) => handleApprove(scenario.id, fb)}
                    onRequestChanges={(fb) => handleRequestChanges(scenario.id, fb)}
                  />
                </div>
