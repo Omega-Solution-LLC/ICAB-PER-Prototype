@@ -8,8 +8,8 @@ import { DataProvider } from "@/contexts/data-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "ICAB PER — Professional Education Record",
-  description: "ICAB Professional Education Record System Prototype",
+  title: "ICAB PER — Professional Experience Record",
+  description: "ICAB Professional Experience Record System Prototype",
 };
 
 export default function RootLayout({
