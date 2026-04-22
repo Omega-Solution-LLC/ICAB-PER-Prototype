@@ -1,150 +1,235 @@
 "use client";
 
-import React, { useState } from 'react';
-import { PageHeader } from '@/components/shared/page-header';
-import { SectionCard } from '@/components/shared/section-card';
-import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/shared/data-table';
-import { EmptyState } from '@/components/shared/empty-state';
-import { Plus, Briefcase, Info } from 'lucide-react';
-import { useStudentData } from '@/hooks/use-student-data';
-import { PracticalPeriodForm, PracticalPeriodFormData } from '@/components/student/practical-period-form';
-import { buildPracticalPeriodColumns } from '@/components/student/practical-period-columns';
-import { PracticalSummaryCard } from '@/components/student/practical-summary-card';
-import { CriticalAreasBanner } from '@/components/student/critical-areas-banner';
-import { PracticalExperiencePeriod } from '@/types';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { FeedbackThread } from '@/components/shared/feedback-thread';
-import { toast } from 'sonner';
+import { useState } from "react";
 
-export default function PracticalExperiencePage() {
-  const { student, practicalPeriods, addPracticalPeriod, updatePracticalPeriod, principalName, firmName, contractStartDate } = useStudentData();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingPeriod, setEditingPeriod] = useState<PracticalExperiencePeriod | undefined>();
-  const [feedbackPeriod, setFeedbackPeriod] = useState<PracticalExperiencePeriod | undefined>();
+const initialPeriods = [
+  {
+    id: 1,
+    startDate: "10 Dec 2020",
+    endDate: "09 Jun 2021",
+    atPrimaryATE: 81,
+    onSecondmentATE: 0,
+    onSecondmentUnauth: 0,
+    total: 81,
+    status: "Pending Confirmation",
+    reviewer: "A Smith",
+  },
+];
 
-  const handleEdit = (period: PracticalExperiencePeriod) => {
-    setEditingPeriod(period);
-    setIsFormOpen(true);
+export default function PracticalWorkExperience() {
+  const [periods, setPeriods] = useState(initialPeriods);
+
+  const targetDays = 450;
+  const totalDays = periods.reduce((sum, p) => sum + p.total, 0);
+  const totalAtPrimary = periods.reduce((sum, p) => sum + p.atPrimaryATE, 0);
+  const totalSecondmentATE = periods.reduce(
+    (sum, p) => sum + p.onSecondmentATE,
+    0,
+  );
+  const totalSecondmentUnauth = periods.reduce(
+    (sum, p) => sum + p.onSecondmentUnauth,
+    0,
+  );
+
+  const pct = (val) =>
+    totalDays > 0 ? ((val / totalDays) * 100).toFixed(2) : "0.00";
+
+  const handleAdd = () => {
+    setPeriods((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        startDate: "New Entry",
+        endDate: "—",
+        atPrimaryATE: 0,
+        onSecondmentATE: 0,
+        onSecondmentUnauth: 0,
+        total: 0,
+        status: "Draft",
+        reviewer: "—",
+      },
+    ]);
   };
-
-  const handleOpenNew = () => {
-    setEditingPeriod(undefined);
-    setIsFormOpen(true);
-  };
-
-  const handleViewFeedback = (period: PracticalExperiencePeriod) => {
-    setFeedbackPeriod(period);
-  };
-
-  const handleSubmit = async (data: PracticalPeriodFormData) => {
-    // simulated latency
-    await new Promise(r => setTimeout(r, 600));
-
-    if (data.id) {
-      updatePracticalPeriod(data.id, {
-        label: data.label,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        daysWorked: data.daysWorked,
-        daysStatAudit: data.daysStatAudit,
-        daysOtherAudit: data.daysOtherAudit,
-        daysNonAudit: data.daysNonAudit,
-      });
-      toast.success("Period updated successfully!");
-    } else {
-      if (!student) return;
-      addPracticalPeriod({
-        studentId: student.id,
-        label: data.label,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        daysWorked: data.daysWorked,
-        daysStatAudit: data.daysStatAudit,
-        daysOtherAudit: data.daysOtherAudit,
-        daysNonAudit: data.daysNonAudit,
-      });
-      toast.success("New practical experience period added!");
-    }
-  };
-
-  const columns = buildPracticalPeriodColumns({
-    onEdit: handleEdit,
-    onViewFeedback: handleViewFeedback,
-  });
-
-  const totalPWE = practicalPeriods
-    .filter(p => p.status === 'approved')
-    .reduce((sum, p) => sum + p.daysWorked, 0);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-10">
-      <PageHeader 
-        title="Practical Experience" 
-        subtitle="Log your six-monthly PWE records"
-        action={
-          <Button onClick={handleOpenNew} className="bg-icab-red hover:bg-icab-wine text-white shadow-sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Period
-          </Button>
-        }
-      />
+    <div className="max-w-5xl mx-auto px-4 py-6 font-sans">
+      {/* Title */}
+      <div className="mb-6">
+        <h2 className="text-3xl font-semibold text-gray-900">
+          Practical work experience
+        </h2>
+      </div>
 
-      <CriticalAreasBanner />
-
-      <SectionCard 
-        title="Work Experience Record" 
-        description="View and manage your logged periods"
-      >
-        <DataTable 
-          columns={columns} 
-          data={practicalPeriods}
-          emptyState={
-            <EmptyState 
-              icon={Briefcase} 
-              title="No periods logged yet" 
-              description="Start recording your practical experience by adding a new period."
-              action={
-                <Button variant="outline" onClick={handleOpenNew} className="mt-2 text-icab-red border-icab-red">
-                  <Plus className="mr-2 h-4 w-4" /> Add Period
-                </Button>
-              }
-            />
-          }
-        />
-        <div className="mt-4 flex items-center text-sm text-slate-500">
-          <Info className="h-4 w-4 mr-2" />
-          Submitted and approved periods cannot be edited. If you need to make changes, request un-submission from your Principal.
+      {/* Summary Bar */}
+      <div className="mb-6 border border-gray-200">
+        <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+            Progress Summary
+          </p>
         </div>
-      </SectionCard>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              {[
+                "Total",
+                "At primary ATE",
+                "On secondment at another ATE",
+                "On secondment at unauthorised employer",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="bg-gray-700 text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="text-center px-4 py-4 border-r border-gray-200">
+                <div className=" text-2xl font-semibold">{totalDays}</div>
+                <div className=" text-xs mt-1">/ {targetDays}</div>
+              </td>
+              <td className="bg-white text-center px-4 py-4 border-r border-gray-200">
+                <div className="text-lg font-semibold text-gray-900">
+                  {pct(totalAtPrimary)}%
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {totalAtPrimary} days
+                </div>
+              </td>
+              <td className="bg-white text-center px-4 py-4 border-r border-gray-200">
+                <div className="text-lg font-semibold text-gray-900">
+                  {pct(totalSecondmentATE)}%
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {totalSecondmentATE} days
+                </div>
+              </td>
+              <td className="bg-white text-center px-4 py-4">
+                <div className="text-lg font-semibold text-gray-900">
+                  {pct(totalSecondmentUnauth)}%
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {totalSecondmentUnauth} days
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <PracticalSummaryCard totalDays={totalPWE} />
+      {/* Main Table */}
+      <div className="border border-gray-200">
+        <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
+          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+            Practical experience records
+          </p>
+        </div>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr>
+              <th
+                className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 align-bottom bg-gray-700"
+                rowSpan={2}>
+                Start date
+              </th>
+              <th
+                className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 align-bottom bg-gray-700"
+                rowSpan={2}>
+                End date
+              </th>
+              <th
+                className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 bg-gray-700"
+                colSpan={4}>
+                Practical work experience gained (in days)
+              </th>
+              <th
+                className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 align-bottom bg-gray-700"
+                rowSpan={2}>
+                Total
+              </th>
+              <th
+                className="text-white text-xs font-semibold text-center px-3 py-3 align-bottom bg-gray-700"
+                rowSpan={2}>
+                Reviewer
+              </th>
+            </tr>
+            <tr>
+              <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 bg-gray-700">
+                Days Worked
+              </th>
+              <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 bg-gray-700">
+                Days in Stat. Audit
+              </th>
+              <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 bg-gray-700">
+                Days in Other Audit
+              </th>
+              <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-200 bg-gray-700">
+                Days in Non-Audit Services
+              </th>
+            </tr>
+          </thead>
 
-      <PracticalPeriodForm 
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        defaultValues={editingPeriod}
-        onSubmit={handleSubmit}
-        firmName={firmName}
-        principalName={principalName}
-        articledshipStartDate={contractStartDate}
-      />
+          <tbody>
+            {/* Add button row */}
+            <tr>
+              <td
+                colSpan={8}
+                className="px-5 py-3 bg-white border-b border-gray-200">
+                <button
+                  onClick={handleAdd}
+                  className="px-4 py-2 text-sm font-medium text-white rounded hover:shadow-sm transition-shadow"
+                  style={{ backgroundColor: "var(--color-icab-red)" }}>
+                  + Add practical work experience
+                </button>
+              </td>
+            </tr>
 
-      {/* Feedback Dialog */}
-      <Dialog open={!!feedbackPeriod} onOpenChange={(open) => !open && setFeedbackPeriod(undefined)}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>View Principal Feedback</DialogTitle>
-          </DialogHeader>
-          {feedbackPeriod && (
-            <FeedbackThread 
-              feedback={feedbackPeriod.principalFeedback} 
-              principalName="M. Hasan FCA"
-              date={feedbackPeriod.approvedAt || "Recently"}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+            {/* Data rows */}
+            {periods.map((p) => (
+              <tr
+                key={p.id}
+                className="bg-white hover:bg-gray-50 transition-colors">
+                <td className="px-3 py-3 text-sm text-gray-700 border-b border-gray-200">
+                  {p.startDate}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-700 border-b border-gray-200">
+                  {p.endDate}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                  {p.atPrimaryATE}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                  {p.onSecondmentATE}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                  {p.onSecondmentUnauth}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                  {p.onSecondmentUnauth}
+                </td>
+
+                <td className="px-3 py-3 text-sm text-center border-b border-gray-200">
+                  <div className="font-semibold text-gray-900">
+                    {p.total} day(s)
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">{p.status}</div>
+                </td>
+                <td className="px-3 py-3 text-sm border-b border-gray-200">
+                  <div className="font-medium text-gray-900">{p.reviewer}</div>
+                  <button
+                    className="text-xs mt-1 cursor-pointer bg-transparent border-none p-0 hover:underline"
+                    style={{ color: "var(--color-icab-red)" }}
+                    onClick={() => {}}>
+                    Change person
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
