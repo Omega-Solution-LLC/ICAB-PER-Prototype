@@ -16,10 +16,6 @@ export function PanelLayout({ variant, children, sidebar }: PanelLayoutProps) {
   const navItems = variant === "student" ? STUDENT_NAV_ITEMS : ADMIN_NAV_ITEMS;
   const pathname = usePathname();
 
-  // Hide TabNav on dashboard page
-  const isDashboard =
-    pathname === "/student/dashboard" || pathname === "/admin/dashboard";
-
   return (
     <div
       className="flex flex-col min-h-screen min-w-0"
