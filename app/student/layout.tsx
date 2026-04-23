@@ -1,6 +1,5 @@
 import { PanelLayout } from "@/components/shared/panel-layout";
 import { RouteGuard } from "@/components/shared/route-guard";
-import { DashboardSidebar } from "@/components/student/dashboard-sidebar";
 import React from "react";
 
 export default function StudentLayout({
@@ -10,9 +9,7 @@ export default function StudentLayout({
 }) {
   return (
     <RouteGuard allowedRole="student">
-      <PanelLayout variant="student" sidebar={<DashboardSidebar />}>
-        {children}
-      </PanelLayout>
+      <PanelLayout variant="student">{children}</PanelLayout>
     </RouteGuard>
   );
 }

@@ -31,7 +31,7 @@ export default function PracticalWorkExperience() {
     0,
   );
 
-  const pct = (val) =>
+  const pct = (val: number) =>
     totalDays > 0 ? ((val / totalDays) * 100).toFixed(2) : "0.00";
 
   const handleAdd = () => {
@@ -61,7 +61,7 @@ export default function PracticalWorkExperience() {
       </div>
 
       {/* Summary Bar */}
-      <div className="mb-6 border border-gray-200">
+      <div className="mb-6 ">
         <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
           <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
             Progress Summary
@@ -84,13 +84,13 @@ export default function PracticalWorkExperience() {
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-gray-50">
             <tr>
-              <td className="text-center px-4 py-4 border-r border-gray-200">
+              <td className="text-center px-4 py-4  border-r border-gray-200">
                 <div className=" text-2xl font-semibold">{totalDays}</div>
                 <div className=" text-xs mt-1">/ {targetDays}</div>
               </td>
-              <td className="bg-white text-center px-4 py-4 border-r border-gray-200">
+              <td className=" text-center px-4 py-4 border-r border-gray-200">
                 <div className="text-lg font-semibold text-gray-900">
                   {pct(totalAtPrimary)}%
                 </div>
@@ -98,7 +98,7 @@ export default function PracticalWorkExperience() {
                   {totalAtPrimary} days
                 </div>
               </td>
-              <td className="bg-white text-center px-4 py-4 border-r border-gray-200">
+              <td className=" text-center px-4 py-4 border-r border-gray-200">
                 <div className="text-lg font-semibold text-gray-900">
                   {pct(totalSecondmentATE)}%
                 </div>
@@ -106,7 +106,7 @@ export default function PracticalWorkExperience() {
                   {totalSecondmentATE} days
                 </div>
               </td>
-              <td className="bg-white text-center px-4 py-4">
+              <td className=" text-center px-4 py-4">
                 <div className="text-lg font-semibold text-gray-900">
                   {pct(totalSecondmentUnauth)}%
                 </div>
@@ -120,11 +120,19 @@ export default function PracticalWorkExperience() {
       </div>
 
       {/* Main Table */}
-      <div className="border border-gray-200">
+      <div className="">
         <div className="bg-gray-50 px-5 py-3 border-b border-gray-200">
-          <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
-            Practical experience records
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+              Practical experience records
+            </p>
+            <button
+              onClick={handleAdd}
+              className="px-4 py-2 text-sm font-medium text-white rounded hover:shadow-sm transition-shadow"
+              style={{ backgroundColor: "var(--color-icab-red)" }}>
+              + Add practical work experience
+            </button>
+          </div>
         </div>
         <table className="w-full border-collapse">
           <thead>
@@ -172,51 +180,37 @@ export default function PracticalWorkExperience() {
           </thead>
 
           <tbody>
-            {/* Add button row */}
-            <tr>
-              <td
-                colSpan={8}
-                className="px-5 py-3 bg-white border-b border-gray-200">
-                <button
-                  onClick={handleAdd}
-                  className="px-4 py-2 text-sm font-medium text-white rounded hover:shadow-sm transition-shadow"
-                  style={{ backgroundColor: "var(--color-icab-red)" }}>
-                  + Add practical work experience
-                </button>
-              </td>
-            </tr>
-
             {/* Data rows */}
             {periods.map((p) => (
               <tr
                 key={p.id}
-                className="bg-white hover:bg-gray-50 transition-colors">
-                <td className="px-3 py-3 text-sm text-gray-700 border-b border-gray-200">
+                className="bg-gray-50 hover:bg-gray-50 transition-colors">
+                <td className="px-3 py-3 text-sm text-gray-700 ">
                   {p.startDate}
                 </td>
-                <td className="px-3 py-3 text-sm text-gray-700 border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-gray-700 ">
                   {p.endDate}
                 </td>
-                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-gray-700 text-center ">
                   {p.atPrimaryATE}
                 </td>
-                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-gray-700 text-center ">
                   {p.onSecondmentATE}
                 </td>
-                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-gray-700 text-center ">
                   {p.onSecondmentUnauth}
                 </td>
-                <td className="px-3 py-3 text-sm text-gray-700 text-center border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-gray-700 text-center ">
                   {p.onSecondmentUnauth}
                 </td>
 
-                <td className="px-3 py-3 text-sm text-center border-b border-gray-200">
+                <td className="px-3 py-3 text-sm text-center ">
                   <div className="font-semibold text-gray-900">
                     {p.total} day(s)
                   </div>
                   <div className="text-xs text-gray-500 mt-0.5">{p.status}</div>
                 </td>
-                <td className="px-3 py-3 text-sm border-b border-gray-200">
+                <td className="px-3 py-3 text-sm ">
                   <div className="font-medium text-gray-900">{p.reviewer}</div>
                   <button
                     className="text-xs mt-1 cursor-pointer bg-transparent border-none p-0 hover:underline"

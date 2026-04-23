@@ -1,20 +1,19 @@
 "use client";
 
 import { ADMIN_NAV_ITEMS, STUDENT_NAV_ITEMS } from "@/lib/constants";
-import { usePathname } from "next/navigation";
 import * as React from "react";
+import { DashboardSidebar } from "../student/dashboard-sidebar";
 import { Header } from "./header";
 import { TabNav } from "./tab-nav";
 
 interface PanelLayoutProps {
   variant: "student" | "admin";
   children: React.ReactNode;
-  sidebar?: React.ReactNode;
 }
 
-export function PanelLayout({ variant, children, sidebar }: PanelLayoutProps) {
+export function PanelLayout({ variant, children }: PanelLayoutProps) {
   const navItems = variant === "student" ? STUDENT_NAV_ITEMS : ADMIN_NAV_ITEMS;
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   return (
     <div
@@ -29,14 +28,14 @@ export function PanelLayout({ variant, children, sidebar }: PanelLayoutProps) {
       <div className="flex-1 px-6 sm:px-8 lg:px-10 pt-5 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Left sidebar - Dashboard section (wider) */}
-          {sidebar && (
-            <div className="lg:col-span-2">
-              <div className="rounded-lg overflow-hidden">{sidebar}</div>
+          <div className="lg:col-span-2">
+            <div className="rounded-lg overflow-hidden">
+              <DashboardSidebar />
             </div>
-          )}
+          </div>
 
           {/* Right column - Tabs and content */}
-          <div className={sidebar ? "lg:col-span-3" : "lg:col-span-5"}>
+          <div className="lg:col-span-3">
             <TabNav
               items={navItems}
               variant={variant}
