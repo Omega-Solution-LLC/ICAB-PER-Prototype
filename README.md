@@ -1,6 +1,6 @@
-# ICAB PER — Professional Education Record Prototype
+# ICAB PER — Professional Experience Record Prototype
 
-A high-fidelity, interactive, **frontend-only** prototype of the [Institute of Chartered Accountants of Bangladesh (ICAB)](https://www.icab.org.bd/) Professional Education Record (PER) system. Built to demonstrate the full student and principal workflow to stakeholders — pixel-polished, fully navigable, and powered entirely by in-memory demo data.
+A high-fidelity, interactive, **frontend-only** prototype of the [Institute of Chartered Accountants of Bangladesh (ICAB)](https://www.icab.org.bd/) Professional Experience Record (PER) system. Built to demonstrate the full student and principal workflow to stakeholders — pixel-polished, fully navigable, and powered entirely by in-memory demo data.
 
 > **Prototype status:** No real backend. No database. All data resets on page refresh. Session is held in `sessionStorage` only.
 

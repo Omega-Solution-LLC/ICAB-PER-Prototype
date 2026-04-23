@@ -14,7 +14,7 @@ export function BrandPanel({ className, ...props }: BrandPanelProps) {
         <Logo variant="light" />
         <h1 className="text-4xl font-bold mt-12 tracking-tight">
           Professional<br />
-          Education<br />
+          Experience<br />
           Record
         </h1>
         <p className="mt-6 text-icab-blush max-w-sm text-lg">

@@ -11,9 +11,10 @@ import { ReviewEthicsApplicationTab } from '@/components/admin/review-ethics-app
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdminData } from '@/hooks/use-admin-data';
 
-export default function StudentDetailPage({ params }: { params: { id: string } }) {
+export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = React.use(params);
   const { students } = useAdminData();
-  const student = students.find(s => s.id === params.id);
+  const student = students.find(s => s.id === resolvedParams.id);
 
   if (!student) {
     return <div className="p-10 text-center">Student not found</div>;

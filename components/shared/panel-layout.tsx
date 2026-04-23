@@ -1,32 +1,54 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Sidebar } from "./sidebar"
-import { Header } from "./header"
-import { STUDENT_NAV_ITEMS, ADMIN_NAV_ITEMS } from "@/lib/constants"
+import { ADMIN_NAV_ITEMS, STUDENT_NAV_ITEMS } from "@/lib/constants";
+import * as React from "react";
+import { DashboardSidebar } from "../student/dashboard-sidebar";
+import { Header } from "./header";
+import { TabNav } from "./tab-nav";
 
 interface PanelLayoutProps {
-  variant: 'student' | 'admin'
-  children: React.ReactNode
+  variant: "student" | "admin";
+  children: React.ReactNode;
 }
 
 export function PanelLayout({ variant, children }: PanelLayoutProps) {
-  const navItems = variant === 'student' ? STUDENT_NAV_ITEMS : ADMIN_NAV_ITEMS
-  
+  const navItems = variant === "student" ? STUDENT_NAV_ITEMS : ADMIN_NAV_ITEMS;
+  // const pathname = usePathname();
+
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <div className="fixed inset-y-0 z-50 hidden md:flex w-64 flex-col">
-        <Sidebar items={navItems} variant={variant} className="w-full h-full" />
+    <div
+      className="flex flex-col min-h-screen min-w-0"
+      style={{ backgroundColor: "#F8F9FA", fontFamily: "Arial, sans-serif" }}>
+      {/* Sticky header */}
+      <div className="sticky top-0 z-40 w-full">
+        <Header navItems={navItems} variant={variant} className="shadow-none" />
       </div>
-      
-      <div className="flex-1 flex flex-col min-w-0 md:pl-64">
-        <Header navItems={navItems} variant={variant} className="sticky top-0 z-40" />
-        <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto space-y-6">
-            {children}
+
+      {/* Two-column layout */}
+      <div className="flex-1 px-6 sm:px-8 lg:px-10 pt-5 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Left sidebar - Dashboard section (wider) */}
+          <div className="lg:col-span-2">
+            <div className="rounded-lg overflow-hidden">
+              <DashboardSidebar />
+            </div>
           </div>
-        </main>
+
+          {/* Right column - Tabs and content */}
+          <div className="lg:col-span-3">
+            <TabNav
+              items={navItems}
+              variant={variant}
+              className=""
+              style={{ paddingLeft: 0 }}
+            />
+
+            <div className="bg-white rounded-lg mt-2 px-6 pt-5 pb-7 min-h-[420px] relative z-[1]">
+              <div className="space-y-6">{children}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }

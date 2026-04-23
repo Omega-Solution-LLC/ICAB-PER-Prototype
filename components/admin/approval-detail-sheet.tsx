@@ -19,10 +19,10 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
 
   const student = students.find(s => s.id === record.studentId);
 
-  const handleApprove = () => {
-    if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'approved' });
-    if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'approved' });
-    if (record.type === 'Ethics Scenario') updateEthicsScenario(record.id as string, { status: 'approved' });
+  const handleApprove = (feedback: string) => {
+    if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'approved', principalFeedback: feedback });
+    if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'approved', principalFeedback: feedback });
+    if (record.type === 'Ethics Scenario') updateEthicsScenario(record.id as string, { status: 'approved', principalFeedback: feedback });
     
     toast.success(`${record.type} approved successfully`);
     onOpenChange(false);

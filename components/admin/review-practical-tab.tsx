@@ -12,9 +12,9 @@ export function ReviewPracticalTab({ studentId }: { studentId: string }) {
   const { allPracticalPeriods, updatePracticalPeriod } = useAdminData();
   const periods = allPracticalPeriods.filter(p => p.studentId === studentId);
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (id: string, feedback: string) => {
     toast.success("Period approved successfully");
-    updatePracticalPeriod(id, { status: 'approved' });
+    updatePracticalPeriod(id, { status: 'approved', principalFeedback: feedback });
   };
 
   const handleRequestChanges = async (id: string, feedback: string) => {
@@ -48,7 +48,7 @@ export function ReviewPracticalTab({ studentId }: { studentId: string }) {
           return (
             <div className="flex justify-end">
               <ApprovalActions
-                onApprove={() => handleApprove(row.id)}
+                onApprove={(fb) => handleApprove(row.id, fb)}
                 onRequestChanges={(fb) => handleRequestChanges(row.id, fb)}
               />
             </div>

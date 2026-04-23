@@ -7,6 +7,7 @@ import { NotificationsBell } from "./notifications-bell"
 import { UserMenu } from "./user-menu"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Sidebar, NavItem } from "./sidebar"
+import { Logo } from "./logo"
 import { useState } from "react"
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 
@@ -34,7 +35,11 @@ export function Header({ navItems, variant, className, children, ...props }: Hea
           </SheetContent>
         </Sheet>
         
-        <div className="hidden sm:block truncate">
+        <div className="hidden md:flex items-center mr-6">
+          <Logo className="scale-90 origin-left" />
+        </div>
+        
+        <div className="hidden sm:block truncate border-l border-slate-200 pl-4 md:ml-2">
           {children}
         </div>
       </div>
