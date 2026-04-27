@@ -3,6 +3,7 @@ import {
   RecordStatus,
   SkillArea,
   TechnicalModule,
+  EthicsModule,
 } from "@/types";
 import {
   Award,
@@ -30,7 +31,7 @@ export const ICAB_PALETTE = {
 export const PILLARS = [
   {
     id: "practical",
-    label: "Practical Experience",
+    label: "Work Experience",
     icon: Briefcase,
     route: "/student/practical-experience",
   },
@@ -42,7 +43,7 @@ export const PILLARS = [
   },
   {
     id: "skills",
-    label: "Skills & IT",
+    label: "Professional Skill Development",
     icon: Award,
     route: "/student/skills-development",
   },
@@ -118,7 +119,7 @@ export const SKILL_AREAS_SEED: SkillArea[] = [
   },
   {
     id: "sk-2",
-    name: "Interpersonal and Communication",
+    name: "Interpersonal",
     iesReference: "IES 3",
     description: "Teamwork and effective communication",
   },
@@ -134,11 +135,27 @@ export const SKILL_AREAS_SEED: SkillArea[] = [
     iesReference: "IES 3",
     description: "Leadership and resource management",
   },
+];
+
+export const ETHICS_MODULES_SEED: Omit<
+  EthicsModule,
+  "status" | "attempts" | "id"
+>[] = [
   {
-    id: "sk-5",
-    name: "Specialized IT Skills",
-    iesReference: "IES 3",
-    description: "Advanced systems and data analytics",
+    name: "Module 1: Professional Integrity",
+    description: "Core concepts of professional integrity and accountability.",
+  },
+  {
+    name: "Module 2: Objectivity and Independence",
+    description: "Maintaining objectivity in fact and appearance.",
+  },
+  {
+    name: "Module 3: Confidentiality",
+    description: "Handling sensitive client and firm information securely.",
+  },
+  {
+    name: "Module 4: Professional Competence",
+    description: "Due care and continuing professional development.",
   },
 ];
 
@@ -215,16 +232,21 @@ export const STATUS_VARIANTS: Record<
 
 export const STUDENT_NAV_ITEMS = [
   {
-    title: "Practical Experience",
+    title: "Dashboard",
+    icon: Home,
+    href: "/student/dashboard",
+  },
+  {
+    title: "Work Experience",
     icon: Briefcase,
     href: "/student/practical-experience",
   },
   {
-    title: "Technical Modules",
+    title: "Technical Development",
     icon: BookOpen,
     href: "/student/technical-development",
   },
-  { title: "Skills & IT", icon: Award, href: "/student/skills-development" },
+  { title: "Professional Skill Development", icon: Award, href: "/student/skills-development" },
   {
     title: "Ethics Training",
     icon: CheckCircle,

@@ -1,191 +1,151 @@
 "use client";
 
-import { StatusBadge } from "@/components/shared/status-badge";
-import { EthicsScenarioWizard } from "@/components/student/ethics-scenario-wizard";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useStudentData } from "@/hooks/use-student-data";
-import { EthicsScenario } from "@/types";
-import { useState } from "react";
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { EthicsModule } from "@/types";
+import { ShieldCheck } from "lucide-react";
+import { toast } from "sonner";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 
 export default function EthicsTrainingPage() {
-  const { ethicsScenarios, updateEthicsScenario } = useStudentData();
-  const [activeScenario, setActiveScenario] = useState<EthicsScenario | null>(
-    null,
-  );
+  const { ethicsModules, updateEthicsModule } = useStudentData();
 
-  const completedCount = ethicsScenarios.filter(
-    (s) => s.status === "approved",
+  const completedModulesCount = ethicsModules.filter(
+    (m) => m.status === "completed",
   ).length;
-  const pieData = [
-    { name: "Completed", value: completedCount, color: "#aa2a2d" },
-    {
-      name: "Remaining",
-      value: Math.max(0, 2 - completedCount),
-      color: "#f1f5f9",
-    },
-  ];
+  const totalModules = ethicsModules.length;
 
-  const handleStartScenario = (scenario: EthicsScenario) => {
-    setActiveScenario(scenario);
+  const modPct = totalModules > 0 ? Math.min((completedModulesCount / totalModules) * 100, 100) : 0;
+
+  const handleStartReview = (module: EthicsModule) => {
+    toast.info(`Opening review materials for ${module.name}`);
   };
 
-  const handleScenarioComplete = () => {
-    if (activeScenario) {
-      updateEthicsScenario(activeScenario.id, { status: "submitted" });
-    }
-    setActiveScenario(null);
+  const handleBookAssessment = (module: EthicsModule) => {
+    updateEthicsModule(module.id, {
+      status: "assessment-pending",
+    });
+    toast.success(`Assessment booked for ${module.name} successfully.`);
   };
 
   return (
     <div className="min-h-screen bg-white font-sans">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* ── Title ── */}
-        <h1
-          className="text-3xl font-semibold mb-6"
-          style={{ color: "var(--color-icab-red)" }}>
-          Ethics Scenarios
-        </h1>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            {/* ── Required Scenarios Section ── */}
-            <div className="border border-gray-200 mb-6">
-              {/* Header */}
-              <div className="bg-gray-700 text-white text-left px-5 py-3 text-sm font-semibold tracking-wide">
-                Required Scenarios
+        {/* ── Title & Progress Bar ── */}
+        <div className="mb-8">
+          <h1
+            className="text-3xl font-semibold mb-4"
+            style={{ color: "var(--color-icab-red)" }}>
+            Ethics Modules
+          </h1>
+          
+          <div className="flex items-center gap-6 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex-1">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                <span className="text-sm font-medium text-gray-600">{completedModulesCount} / {totalModules} modules</span>
               </div>
-
-              {/* Body */}
-              <div className="bg-gray-50 px-5 py-5">
-                <p className="text-sm text-gray-600 mb-4 font-normal">
-                  Complete 2 predefined ethics scenarios to fulfill Pillar 3
-                  prerequisites.
-                </p>
-                <div className="space-y-3">
-                  {ethicsScenarios.map((scenario) => (
-                    <div
-                      key={scenario.id}
-                      className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-4 border border-gray-200 gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1.5">
-                          <h3 className="font-semibold text-gray-900">
-                            {scenario.dilemma}
-                          </h3>
-                          <StatusBadge status={scenario.status} />
-                        </div>
-                        <p className="text-sm text-gray-600 line-clamp-2 font-normal">
-                          {scenario.description}
-                        </p>
-                      </div>
-                      <div className="w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
-                        {scenario.status !== "approved" &&
-                        scenario.status !== "submitted" ? (
-                          <button
-                            onClick={() => handleStartScenario(scenario)}
-                            className="w-full px-4 py-2 text-sm font-medium text-white rounded hover:shadow-sm transition-shadow whitespace-nowrap"
-                            style={{
-                              backgroundColor: "var(--color-icab-red)",
-                            }}>
-                            Start Scenario
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="w-full px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded whitespace-nowrap">
-                            View Submission
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <Progress value={modPct} className="w-full">
+                <ProgressTrack className="bg-gray-100 h-2.5">
+                  <ProgressIndicator style={{ backgroundColor: "var(--color-icab-red)" }} />
+                </ProgressTrack>
+              </Progress>
             </div>
-          </div>
-
-          <div>
-            {/* ── Progress Chart Section ── */}
-            <div className="border border-gray-200">
-              {/* Header */}
-              <div className="bg-gray-700 text-white text-left px-5 py-3 text-sm font-semibold tracking-wide">
-                Overall Progress
-              </div>
-
-              {/* Body */}
-              <div className="bg-gray-50 px-5 py-5">
-                <p className="text-xs text-gray-600 mb-4 font-normal">
-                  2 Scenarios Required
-                </p>
-                <div className="h-[200px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={2}
-                        dataKey="value"
-                        stroke="none">
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => [value, "Scenarios"]} />
-                      <Legend verticalAlign="bottom" height={36} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-sm">
-                  <span className="font-medium text-gray-900">Status</span>
-                  <span
-                    className="font-semibold"
-                    style={{ color: "var(--color-icab-red)" }}>
-                    {completedCount >= 2 ? "Requirement Met" : "In Progress"}
-                  </span>
-                </div>
-              </div>
+            <div className="text-3xl font-bold tracking-tight" style={{ color: "var(--color-icab-red)" }}>
+              {Math.round(modPct)}%
             </div>
           </div>
         </div>
 
-        {/* ── Dialog Modal ── */}
-        <Dialog
-          open={!!activeScenario}
-          onOpenChange={(open) => !open && setActiveScenario(null)}>
-          <DialogContent className="sm:max-w-[700px] h-full sm:h-auto max-h-screen sm:max-h-[85vh] flex flex-col p-0 overflow-hidden">
-            <DialogHeader className="px-6 py-4 border-b shrink-0">
-              <DialogTitle>Scenario Wizard</DialogTitle>
-              <DialogDescription className="sr-only">
-                Complete the ethics scenario
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
-              {activeScenario && (
-                <EthicsScenarioWizard
-                  scenario={activeScenario}
-                  onComplete={handleScenarioComplete}
-                  onCancel={() => setActiveScenario(null)}
-                />
-              )}
+        {/* ── Info section ── */}
+        <div className="border border-gray-200 mb-6">
+          {/* Header bar */}
+          <div className="bg-gray-700 text-white text-left px-5 py-3 text-sm font-semibold tracking-wide flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4" />
+            About Ethics Modules
+          </div>
+
+          {/* Body */}
+          <div className="bg-gray-50 px-5 py-5">
+            <p className="text-sm text-gray-600 leading-relaxed font-normal">
+              Ethics Modules focus on developing your core competencies in professional integrity, objectivity, and ethical behavior. You must complete the modules, reviewing the materials and passing the assessment for each to fulfill Pillar 3 prerequisites.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Modules Grid ── */}
+        <div className="mb-6 border border-gray-200">
+          <div className="bg-gray-700 text-white text-left px-5 py-3 text-sm font-semibold tracking-wide">
+            Ethics Modules
+          </div>
+
+          <div className="bg-gray-50 border-t-0 border-gray-200 px-5 py-6">
+            <div className="grid grid-cols-2 gap-4">
+              {ethicsModules.map((module) => (
+                <div
+                  key={module.id}
+                  className="border border-gray-200 bg-white p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+                  <div>
+                    <div className="flex items-start justify-between mb-2">
+                      <p
+                        className="font-semibold text-sm"
+                        style={{ color: "var(--color-icab-red)" }}>
+                        {module.name}
+                      </p>
+                      {module.status === "completed" && (
+                        <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
+                          Completed
+                        </span>
+                      )}
+                      {module.status === "in-progress" && (
+                        <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                          In Progress
+                        </span>
+                      )}
+                      {module.status === "not-started" && (
+                        <span className="text-xs font-semibold text-gray-600 bg-gray-200 px-2 py-1 rounded">
+                          Not Started
+                        </span>
+                      )}
+                      {module.status === "assessment-pending" && (
+                        <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-700 leading-snug mb-3 font-normal">
+                      {module.description ||
+                        "Complete the review materials and assessment"}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => handleStartReview(module)}
+                      className="flex-1 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 transition-colors cursor-pointer">
+                      Review Materials
+                    </button>
+                    <button
+                      onClick={() => handleBookAssessment(module)}
+                      disabled={module.status === "not-started" || module.status === "completed" || module.status === "assessment-pending"}
+                      className="flex-1 px-3 py-2 text-xs font-medium text-white rounded hover:shadow-sm transition-shadow cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      style={{
+                        backgroundColor:
+                          module.status === "not-started" || module.status === "completed" || module.status === "assessment-pending"
+                            ? undefined
+                            : "var(--color-icab-red)",
+                      }}>
+                      {module.status === "completed"
+                        ? "Completed"
+                        : module.status === "assessment-pending"
+                        ? "Assessment Booked"
+                        : "Take Assessment"}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </div>
       </div>
     </div>
   );

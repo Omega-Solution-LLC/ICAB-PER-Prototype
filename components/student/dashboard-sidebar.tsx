@@ -119,7 +119,7 @@ function Card({
 }) {
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden relative ${className}`}
+      className={`bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm relative ${className}`}
       style={style}>
       {children}
     </div>
@@ -139,7 +139,7 @@ function DotGrid({ color }: { color: string }) {
 }
 
 export function DashboardSidebar() {
-  const { student, practicalPeriods, technicalModules, ethicsScenarios } =
+  const { student, practicalPeriods, technicalModules, ethicsModules } =
     useStudentData();
   if (!student) return null;
 
@@ -149,18 +149,18 @@ export function DashboardSidebar() {
   const modulesPassed = technicalModules.filter(
     (m) => m.status === "completed",
   ).length;
-  const ethicsPassed = ethicsScenarios.filter(
-    (e) => e.status === "approved",
+  const ethicsPassed = ethicsModules.filter(
+    (e) => e.status === "completed",
   ).length;
 
   const pwePct = Math.min((totalPWE / 450) * 100, 100);
   const modPct = Math.min((modulesPassed / 11) * 100, 100);
-  const ethPct = Math.min((ethicsPassed / 2) * 100, 100);
+  const ethPct = Math.min((ethicsPassed / 4) * 100, 100);
   const daysLeft = Math.max(0, 450 - totalPWE);
 
   return (
     <div className="space-y-3 min-h-screen">
-      <StudentBanner student={student} principalName="M. Hasan FCA" />
+      <StudentBanner student={student} principalName="Sabbir Hosen FCA" />
 
       {/* ══ ROW 1: Hero PWE (2/3) + Days Left (1/3) ══ */}
       <div className="grid grid-cols-3 gap-3">
@@ -169,7 +169,7 @@ export function DashboardSidebar() {
           accent="var(--color-icab-red)">
           <DotGrid color="#e63946" />
           <div>
-            <Kicker>Phase 1 · Practical Experience</Kicker>
+            <Kicker>Phase 1 · Work Experience</Kicker>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-4xl font-semibold text-slate-900">
                 {totalPWE}
@@ -209,7 +209,7 @@ export function DashboardSidebar() {
             </div>
             <Pill color="var(--color-icab-red)">Phase 2</Pill>
           </div>
-          <Kicker>Technical Dev</Kicker>
+          <Kicker>Technical Development</Kicker>
           <div className="text-2xl font-semibold text-slate-900 mb-3">
             {modulesPassed}
             <span className="text-sm font-normal text-slate-600"> /11</span>
@@ -235,9 +235,9 @@ export function DashboardSidebar() {
           <Kicker>Ethics & Prof.</Kicker>
           <div className="text-2xl font-semibold text-slate-900 mb-3">
             {ethicsPassed}
-            <span className="text-sm font-normal text-slate-600"> /2</span>
+            <span className="text-sm font-normal text-slate-600"> /4</span>
           </div>
-          <p className="text-xs text-slate-600 mb-4">scenarios completed</p>
+          <p className="text-xs text-slate-600 mb-4">modules completed</p>
           <div className="flex justify-center">
             <ArcProgress
               value={ethPct}
@@ -292,32 +292,9 @@ export function DashboardSidebar() {
         </div>
       </div>
 
-      {/* ══ ROW 3: Deadlines + Overall progress ══ */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* ══ ROW 3: Overall progress ══ */}
+      <div className="grid grid-cols-1 gap-3">
         <Card className="p-4" accent="var(--color-icab-red)">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-6 h-6 rounded-lg bg-gray-100 flex items-center justify-center">
-              <Target className="w-3 h-3 text-slate-600" />
-            </div>
-            <Kicker>Upcoming</Kicker>
-          </div>
-          <div className="space-y-2">
-            {[
-              { label: "H2 Log Submission", date: "Jul 31" },
-              { label: "SBM Exam", date: "Aug 15" },
-              { label: "Ethics Check", date: "Dec 31" },
-            ].map((d) => (
-              <div
-                key={d.label}
-                className="flex items-center justify-between gap-2 text-xs">
-                <span className="text-slate-700">{d.label}</span>
-                <span className="text-slate-500 font-medium">{d.date}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="col-span-2 p-4" accent="var(--color-icab-red)">
           <Kicker>Overall Progress</Kicker>
           <p className="text-xs text-slate-600 mb-4">
             All three training phases
@@ -325,7 +302,7 @@ export function DashboardSidebar() {
           <div className="grid grid-cols-3 gap-3">
             {[
               {
-                label: "Practical Experience",
+                label: "Work Experience",
                 value: pwePct,
                 points: `${totalPWE} / 450`,
                 icon: Briefcase,
@@ -339,7 +316,7 @@ export function DashboardSidebar() {
               {
                 label: "Ethics & Professionalism",
                 value: ethPct,
-                points: `${ethicsPassed} / 2`,
+                points: `${ethicsPassed} / 4`,
                 icon: CheckCircle,
               },
             ].map((row) => {

@@ -7,9 +7,10 @@ import { useStudentData } from "@/hooks/use-student-data";
 import { SKILL_AREAS_SEED } from "@/lib/constants";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 
 export default function SkillsDevelopmentPage() {
-  const { student, addSkillRecord } = useStudentData();
+  const { student, skillRecords, addSkillRecord } = useStudentData();
   const [activeTabId, setActiveTabId] = useState(SKILL_AREAS_SEED[0].id);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -36,15 +37,40 @@ export default function SkillsDevelopmentPage() {
     });
   };
 
+  const completedSkillAreas = new Set(
+    skillRecords.filter((s) => s.status === "approved").map((s) => s.skillAreaId)
+  ).size;
+  const totalSkillAreas = SKILL_AREAS_SEED.length;
+  const skillPct = Math.min((completedSkillAreas / totalSkillAreas) * 100, 100);
+
   return (
     <div className="min-h-screen bg-white font-sans">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* ── Title ── */}
-        <h1
-          className="text-3xl font-semibold mb-6"
-          style={{ color: "var(--color-icab-red)" }}>
-          Skills & IT Development
-        </h1>
+        {/* ── Title & Progress Bar ── */}
+        <div className="mb-8">
+          <h1
+            className="text-3xl font-semibold mb-4"
+            style={{ color: "var(--color-icab-red)" }}>
+            Professional Skill Development
+          </h1>
+          
+          <div className="flex items-center gap-6 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex-1">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                <span className="text-sm font-medium text-gray-600">{completedSkillAreas} / {totalSkillAreas} skill areas</span>
+              </div>
+              <Progress value={skillPct} className="w-full">
+                <ProgressTrack className="bg-gray-100 h-2.5">
+                  <ProgressIndicator style={{ backgroundColor: "var(--color-icab-red)" }} />
+                </ProgressTrack>
+              </Progress>
+            </div>
+            <div className="text-3xl font-bold tracking-tight" style={{ color: "var(--color-icab-red)" }}>
+              {Math.round(skillPct)}%
+            </div>
+          </div>
+        </div>
 
         {/* ── Info section ── */}
         <div className="border border-gray-200 mb-6">
@@ -71,19 +97,15 @@ export default function SkillsDevelopmentPage() {
           defaultValue={SKILL_AREAS_SEED[0].id}
           onValueChange={setActiveTabId}
           className="w-full">
-          <div className="border border-gray-200 border-b-0 bg-gray-50">
-            <TabsList className="bg-gray-50 p-0 rounded-none w-full flex justify-start border-b border-gray-200 overflow-x-auto">
+          <div className="bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm mb-6">
+            <TabsList className="grid w-full grid-cols-4 bg-transparent p-0 h-auto gap-1">
               {SKILL_AREAS_SEED.map((skill) => (
                 <TabsTrigger
                   key={skill.id}
                   value={skill.id}
-                  className="data-[state=active]:border-b-2 data-[state=active]:bg-transparent rounded-none px-4 py-3 whitespace-nowrap text-sm font-normal text-gray-600 border-b-2 border-transparent"
+                  className="data-[state=active]:bg-gray-100 data-[state=active]:shadow-sm rounded-lg px-3 py-3 text-sm font-medium text-gray-600 transition-all text-center h-full whitespace-normal break-words"
                   style={{
                     color:
-                      activeTabId === skill.id
-                        ? "var(--color-icab-red)"
-                        : undefined,
-                    borderBottomColor:
                       activeTabId === skill.id
                         ? "var(--color-icab-red)"
                         : undefined,
@@ -99,8 +121,8 @@ export default function SkillsDevelopmentPage() {
               key={skill.id}
               value={skill.id}
               className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-              <div className="border border-t-0 border-gray-200 bg-white">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-5 py-5 border-b border-gray-200">
+              <div className="border border-gray-200 bg-white rounded-xl overflow-hidden shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-5 border-b border-gray-100 bg-gray-50/50">
                   <div>
                     <h3 className="text-base font-semibold text-gray-900">
                       {skill.name}
@@ -113,7 +135,7 @@ export default function SkillsDevelopmentPage() {
                     onClick={handleOpenDialog}
                     className="mt-4 sm:mt-0 px-4 py-2 text-sm font-medium text-white rounded hover:shadow-sm transition-shadow"
                     style={{ backgroundColor: "var(--color-icab-red)" }}>
-                    <Plus className="inline w-4 h-4 mr-1.5" /> Log Scenario
+                    <Plus className="inline w-4 h-4 mr-1.5" /> Add New
                   </button>
                 </div>
 

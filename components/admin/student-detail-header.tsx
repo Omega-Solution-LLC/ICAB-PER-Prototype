@@ -35,7 +35,7 @@ export function StudentDetailHeader({ studentId }: StudentDetailHeaderProps) {
 
       <div className="grid md:grid-cols-3 gap-4">
         <PillarProgressCard 
-          title="Practical Experience" 
+          title="Work Experience" 
           description={`${totalPWE} of 450 days approved`}
           value={practicalPercent}
           href={`/admin/students/${student.id}?tab=practical`}
@@ -49,7 +49,7 @@ export function StudentDetailHeader({ studentId }: StudentDetailHeaderProps) {
           actionLabel="View progress"
         />
         <PillarProgressCard 
-          title="Skills Development" 
+          title="Professional Skill Development" 
           description={`${skillsApproved} skill areas approved`}
           value={skillsPercent}
           href={`/admin/students/${student.id}?tab=skills`}

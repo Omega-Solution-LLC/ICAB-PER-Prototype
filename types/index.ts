@@ -87,19 +87,24 @@ export type EthicsTrainingProgress = {
   examBarWarning: boolean;
 };
 
-export type EthicsScenario = {
+export type EthicsModule = {
+  id: string;
+  name: string;
+  description: string;
+  status: RecordStatus;
+  attempts: number;
+  lastAttemptAt?: string;
+  score?: number;
+};
+export type EthicsApplication = {
   id: string;
   studentId: string;
   periodLabel: string;
-  dilemma: string;
-  description: string;
-  principlesApplied: string[];
-  actionsTaken: string;
-  reflection: string;
-  justification: string;
+  answers: Record<string, string>;
   status: RecordStatus;
   principalFeedback?: string;
   submittedAt?: string;
+  approvedAt?: string;
 };
 
-export type ApprovalRecordType = 'practical' | 'skill' | 'ethics-scenario';
+export type ApprovalRecordType = 'practical' | 'skill' | 'ethics-module' | 'ethics-application';

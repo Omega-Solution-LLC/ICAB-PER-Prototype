@@ -2,7 +2,6 @@
 
 import { ADMIN_NAV_ITEMS, STUDENT_NAV_ITEMS } from "@/lib/constants";
 import * as React from "react";
-import { DashboardSidebar } from "../student/dashboard-sidebar";
 import { Header } from "./header";
 import { TabNav } from "./tab-nav";
 
@@ -24,29 +23,17 @@ export function PanelLayout({ variant, children }: PanelLayoutProps) {
         <Header navItems={navItems} variant={variant} className="shadow-none" />
       </div>
 
-      {/* Two-column layout */}
-      <div className="flex-1 px-6 sm:px-8 lg:px-10 pt-5 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Left sidebar - Dashboard section (wider) */}
-          <div className="lg:col-span-2">
-            <div className="rounded-lg overflow-hidden">
-              <DashboardSidebar />
-            </div>
-          </div>
+      {/* Main content */}
+      <div className="flex-1 px-6 sm:px-8 lg:px-10 pt-5 pb-8 max-w-7xl mx-auto w-full">
+        <TabNav
+          items={navItems}
+          variant={variant}
+          className=""
+          style={{ paddingLeft: 0 }}
+        />
 
-          {/* Right column - Tabs and content */}
-          <div className="lg:col-span-3">
-            <TabNav
-              items={navItems}
-              variant={variant}
-              className=""
-              style={{ paddingLeft: 0 }}
-            />
-
-            <div className="bg-white rounded-lg mt-2 px-6 pt-5 pb-7 min-h-[420px] relative z-[1]">
-              <div className="space-y-6">{children}</div>
-            </div>
-          </div>
+        <div className="bg-white rounded-lg mt-2 px-6 pt-5 pb-7 min-h-[420px] relative z-[1]">
+          <div className="space-y-6">{children}</div>
         </div>
       </div>
     </div>
