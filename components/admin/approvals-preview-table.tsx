@@ -17,13 +17,13 @@ export type ApprovalPreviewRow = {
 };
 
 export function ApprovalsPreviewTable() {
-  const { allPracticalPeriods, allSkillRecords, allEthicsScenarios, students } = useAdminData();
+  const { allPracticalPeriods, allSkillRecords, allEthicsApplications, students } = useAdminData();
 
   // Combine — include submitted (new) and changes-requested (awaiting student revision)
   const combined = [
-    ...allPracticalPeriods.map(p => ({ ...p, type: 'Practical Experience' as const, date: p.submittedAt || new Date().toISOString() })),
-    ...allSkillRecords.map(s => ({ ...s, type: 'Skill Record' as const, date: s.submittedAt || new Date().toISOString() })),
-    ...allEthicsScenarios.map(s => ({ ...s, type: 'Ethics Scenario' as const, date: s.submittedAt || new Date().toISOString() }))
+    ...allPracticalPeriods.map(p => ({ ...p, type: 'Work Experience' as const, date: p.submittedAt || new Date().toISOString() })),
+    ...allSkillRecords.map(s => ({ ...s, type: 'Professional Skill Development' as const, date: s.submittedAt || new Date().toISOString() })),
+    ...allEthicsApplications.map(s => ({ ...s, type: 'Ethics Application' as const, date: s.submittedAt || new Date().toISOString() }))
   ].filter(r => r.status === 'submitted' || r.status === 'changes-requested')
    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

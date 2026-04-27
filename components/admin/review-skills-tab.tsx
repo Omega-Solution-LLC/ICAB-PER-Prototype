@@ -22,7 +22,7 @@ export function ReviewSkillsTab({ studentId }: { studentId: string }) {
 
   if (records.length === 0) {
     return (
-      <ReviewTab title="Skills Development Review" description="Review IES 3 professional skills records.">
+      <ReviewTab title="Professional Skill Development Review" description="Review IES 3 professional skills records.">
         <div className="p-8 text-center text-slate-500 border border-dashed rounded-lg bg-slate-50/50">
           No skill records submitted yet.
         </div>
@@ -31,7 +31,7 @@ export function ReviewSkillsTab({ studentId }: { studentId: string }) {
   }
 
   return (
-    <ReviewTab title="Skills Development Review" description="Review IES 3 professional skills records.">
+    <ReviewTab title="Professional Skill Development Review" description="Review IES 3 professional skills records.">
       <div className="space-y-6">
         {records.map(record => (
           <div key={record.id} className="bg-white border rounded-lg overflow-hidden shadow-sm">

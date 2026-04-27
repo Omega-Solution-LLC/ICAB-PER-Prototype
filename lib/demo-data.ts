@@ -1,12 +1,12 @@
-import { Student, Principal, PracticalExperiencePeriod, TechnicalModule, SkillRecord, EthicsTrainingProgress, EthicsScenario } from '@/types';
-import { TECHNICAL_MODULES_SEED } from './constants';
+import { Student, Principal, PracticalExperiencePeriod, TechnicalModule, SkillRecord, EthicsTrainingProgress, EthicsModule, EthicsApplication } from '@/types';
+import { TECHNICAL_MODULES_SEED, ETHICS_MODULES_SEED } from './constants';
 
 export const DEMO_PRINCIPAL: Principal = {
   id: 'prin-001',
-  name: 'M. Hasan FCA',
-  email: 'hasan@aqasem.com',
+  name: 'Sabbir Hosen FCA',
+  email: 'sabbir@omegasolution.com',
   role: 'admin',
-  firmName: 'A. Qasem & Co.',
+  firmName: 'Omega Solution',
   designation: 'Managing Partner'
 };
 
@@ -19,9 +19,9 @@ export const DEMO_STUDENTS: Student[] = [
     studentNumber: '31289',
     enrollmentDate: '2024-01-01',
     principalId: 'prin-001',
-    firmName: 'A. Qasem & Co.',
+    firmName: 'Omega Solution',
     contractStartDate: '2024-01-01',
-    contractEndDate: '2027-01-01',
+    contractEndDate: '2026-12-31',
     phone: '01711223344'
   },
   {
@@ -32,7 +32,7 @@ export const DEMO_STUDENTS: Student[] = [
     studentNumber: '31290',
     enrollmentDate: '2023-01-01',
     principalId: 'prin-001',
-    firmName: 'A. Qasem & Co.',
+    firmName: 'Omega Solution',
     contractStartDate: '2023-01-01',
     contractEndDate: '2026-01-01',
   },
@@ -44,7 +44,7 @@ export const DEMO_STUDENTS: Student[] = [
     studentNumber: '31291',
     enrollmentDate: '2023-07-01',
     principalId: 'prin-001',
-    firmName: 'A. Qasem & Co.',
+    firmName: 'Omega Solution',
     contractStartDate: '2023-07-01',
     contractEndDate: '2026-07-01',
   },
@@ -56,7 +56,7 @@ export const DEMO_STUDENTS: Student[] = [
     studentNumber: '31292',
     enrollmentDate: '2024-07-01',
     principalId: 'prin-001',
-    firmName: 'A. Qasem & Co.',
+    firmName: 'Omega Solution',
     contractStartDate: '2024-07-01',
     contractEndDate: '2027-07-01',
   }
@@ -128,19 +128,6 @@ export const DEMO_SKILL_RECORDS: SkillRecord[] = [
     },
     status: 'approved',
     submittedAt: '2024-07-08'
-  },
-  {
-    id: 'sr-3',
-    studentId: 'stu-001',
-    skillAreaId: 'sk-5', // IT
-    periodLabel: 'Year 1 - H2',
-    guidedAnswers: {
-      situation: 'Large dataset sampling required',
-      action: 'Used IDEA software to extract statistically valid samples',
-      result: 'Saved 10 hours of manual effort'
-    },
-    status: 'submitted',
-    submittedAt: '2025-01-10'
   }
 ];
 
@@ -152,31 +139,27 @@ export const DEMO_ETHICS_PROGRESS: EthicsTrainingProgress = {
   examBarWarning: false,
 };
 
-export const DEMO_ETHICS_SCENARIOS: EthicsScenario[] = [
+export const DEMO_ETHICS_MODULES: EthicsModule[] = ETHICS_MODULES_SEED.map((m, i) => ({
+  id: `em-${i}`,
+  ...m,
+  status: i < 2 ? 'completed' : i === 2 ? 'in-progress' : 'not-started',
+  attempts: i < 2 ? 1 : i === 2 ? 1 : 0,
+  score: i < 2 ? 80 + i * 5 : undefined,
+  lastAttemptAt: i < 3 ? '2024-06-15' : undefined,
+}));
+
+export const DEMO_ETHICS_APPLICATIONS: EthicsApplication[] = [
   {
-    id: 'es-1',
+    id: 'ea-1',
     studentId: 'stu-001',
     periodLabel: 'Year 1 - H1',
-    dilemma: 'Conflict of Interest Discovery',
-    description: 'Found out a team member was related to the client CFO.',
-    principlesApplied: ['Objectivity', 'Integrity'],
-    actionsTaken: 'Reported to the engagement manager immediately.',
-    reflection: 'Reaffirmed the importance of independence declarations.',
-    justification: 'Necessary to maintain audit firm independence and comply with ICAB code.',
+    answers: {
+      q1: 'During the year-end audit, I discovered a potential conflict of interest regarding a senior manager. I immediately reported it to the engagement partner.',
+      q2: 'I maintained independence by refusing a valuable gift from a client, politely explaining our firm\'s strict policies regarding objectivity.',
+      q3: 'I identified a discrepancy in the client\'s revenue recognition policy and questioned management until I received sufficient appropriate audit evidence.'
+    },
     status: 'approved',
-    principalFeedback: 'Handled correctly according to firm policy.',
-    submittedAt: '2024-07-12'
-  },
-  {
-    id: 'es-2',
-    studentId: 'stu-001',
-    periodLabel: 'Year 1 - H2',
-    dilemma: 'Client Gift Offer',
-    description: 'Client offered expensive concert tickets during year-end audit.',
-    principlesApplied: ['Objectivity', 'Professional Behavior'],
-    actionsTaken: 'Politely declined the tickets citing firm policy.',
-    reflection: 'Learned how to respectfully decline gifts without damaging client relations.',
-    justification: 'Accepting could impair objectivity or appear to do so.',
-    status: 'draft',
+    submittedAt: '2024-07-15',
+    approvedAt: '2024-07-20',
   }
 ];

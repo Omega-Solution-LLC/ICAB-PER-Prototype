@@ -31,11 +31,11 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
 
       <Tabs defaultValue="practical" className="mt-8">
         <TabsList className="bg-slate-100/80 p-1 w-full justify-start overflow-x-auto h-auto flex-wrap gap-1 border border-slate-200">
-          <TabsTrigger value="practical" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Practical</TabsTrigger>
-          <TabsTrigger value="technical" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Technical</TabsTrigger>
-          <TabsTrigger value="skills" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Skills</TabsTrigger>
+          <TabsTrigger value="practical" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Work Experience</TabsTrigger>
+          <TabsTrigger value="technical" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Technical Development</TabsTrigger>
+          <TabsTrigger value="skills" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Professional Skill Development</TabsTrigger>
           <TabsTrigger value="ethics-training" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Ethics Training</TabsTrigger>
-          <TabsTrigger value="ethics-application" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Ethics Scenarios</TabsTrigger>
+          <TabsTrigger value="ethics-application" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">Ethics Application</TabsTrigger>
         </TabsList>
 
         <div className="mt-6">

@@ -10,7 +10,7 @@ export interface InfoRowProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * InfoRow — label/value pair for read-only detail panels.
- * @example <InfoRow label="Firm" value="A. Qasem & Co." />
+ * @example <InfoRow label="Firm" value="Omega Solution" />
  */
 export function InfoRow({ label, value, icon: Icon, className, ...props }: InfoRowProps) {
   return (

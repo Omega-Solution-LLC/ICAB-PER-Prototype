@@ -7,14 +7,14 @@ import { ApprovalDetailSheet } from './approval-detail-sheet';
 import { ApprovalPreviewRow } from './approvals-preview-table';
 
 export function ApprovalQueueTable() {
-  const { allPracticalPeriods, allSkillRecords, allEthicsScenarios, students } = useAdminData();
+  const { allPracticalPeriods, allSkillRecords, allEthicsApplications, students } = useAdminData();
   const [selectedRecord, setSelectedRecord] = useState<ApprovalPreviewRow | null>(null);
 
   // Combine — include submitted (new) and changes-requested (awaiting student revision)
   const combined = [
-    ...allPracticalPeriods.map(p => ({ ...p, type: 'Practical Experience', date: p.submittedAt || new Date().toISOString() })),
-    ...allSkillRecords.map(s => ({ ...s, type: 'Skill Record', date: s.submittedAt || new Date().toISOString() })),
-    ...allEthicsScenarios.map(s => ({ ...s, type: 'Ethics Scenario', date: s.submittedAt || new Date().toISOString() }))
+    ...allPracticalPeriods.map(p => ({ ...p, type: 'Work Experience', date: p.submittedAt || new Date().toISOString() })),
+    ...allSkillRecords.map(s => ({ ...s, type: 'Professional Skill Development', date: s.submittedAt || new Date().toISOString() })),
+    ...allEthicsApplications.map(s => ({ ...s, type: 'Ethics Application', date: s.submittedAt || new Date().toISOString() }))
   ].filter(r => r.status === 'submitted' || r.status === 'changes-requested')
    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

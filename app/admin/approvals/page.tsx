@@ -28,10 +28,10 @@ export default function ApprovalsQueuePage() {
               value: pillarFilter,
               onChange: setPillarFilter,
               options: [
-                { label: 'Practical Experience', value: 'practical' },
-                { label: 'Technical Modules', value: 'technical' },
-                { label: 'Skills & IT', value: 'skills' },
-                { label: 'Ethics', value: 'ethics' },
+                { label: 'Work Experience', value: 'practical' },
+                { label: 'Technical Development', value: 'technical' },
+                { label: 'Professional Skill Development', value: 'skills' },
+                { label: 'Ethics Application', value: 'ethics' },
               ]
             }
           ]}

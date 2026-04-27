@@ -6,6 +6,7 @@ import { TechnicalModule } from "@/types";
 import { BookOpen, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 
 export default function TechnicalDevelopmentPage() {
   const { technicalModules, updateTechnicalModule } = useStudentData();
@@ -18,6 +19,8 @@ export default function TechnicalDevelopmentPage() {
     (m) => m.status === "completed",
   ).length;
   const totalModules = technicalModules.length;
+
+  const modPct = Math.min((completedModulesCount / totalModules) * 100, 100);
 
   const handleBookAssessment = (module: TechnicalModule) => {
     setBookingModule(module);
@@ -43,30 +46,29 @@ export default function TechnicalDevelopmentPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* ── Title ── */}
-        <h1
-          className="text-3xl font-semibold mb-6"
-          style={{ color: "var(--color-icab-red)" }}>
-          Technical Development
-        </h1>
-
-        {/* ── Progress summary ── */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-3 mb-6">
-          <div className="flex items-start gap-2 text-sm text-gray-600">
-            <span className="mt-1.5 shrink-0 w-1.5 h-1.5 bg-gray-400 rounded-sm inline-block" />
-            <span>
-              <span className="font-medium text-gray-900">Total modules:</span>{" "}
-              <span className="text-gray-600">{totalModules}</span>
-            </span>
-          </div>
-          <div className="flex items-start gap-2 text-sm text-gray-600">
-            <span className="mt-1.5 shrink-0 w-1.5 h-1.5 bg-gray-400 rounded-sm inline-block" />
-            <span>
-              <span className="font-medium text-gray-900">Completed:</span>{" "}
-              <span className="text-gray-600">
-                {completedModulesCount} of {totalModules}
-              </span>
-            </span>
+        {/* ── Title & Progress Bar ── */}
+        <div className="mb-8">
+          <h1
+            className="text-3xl font-semibold mb-4"
+            style={{ color: "var(--color-icab-red)" }}>
+            Technical Development
+          </h1>
+          
+          <div className="flex items-center gap-6 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex-1">
+              <div className="flex justify-between mb-2">
+                <span className="text-sm font-semibold text-gray-700">Overall Progress</span>
+                <span className="text-sm font-medium text-gray-600">{completedModulesCount} / {totalModules} modules</span>
+              </div>
+              <Progress value={modPct} className="w-full">
+                <ProgressTrack className="bg-gray-100 h-2.5">
+                  <ProgressIndicator style={{ backgroundColor: "var(--color-icab-red)" }} />
+                </ProgressTrack>
+              </Progress>
+            </div>
+            <div className="text-3xl font-bold tracking-tight" style={{ color: "var(--color-icab-red)" }}>
+              {Math.round(modPct)}%
+            </div>
           </div>
         </div>
 

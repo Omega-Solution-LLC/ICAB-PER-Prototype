@@ -19,25 +19,28 @@ export function useStudentData() {
   const myTechnicalModules = dataContext.technicalModules; // In prototype, modules are shared for the demo student
   const mySkillRecords = dataContext.skillRecords.filter(s => s.studentId === studentId);
   const myEthicsProgress = dataContext.ethicsProgress;
-  const myEthicsScenarios = dataContext.ethicsScenarios.filter(e => e.studentId === studentId);
+  const myEthicsModules = dataContext.ethicsModules;
+  const myEthicsApplications = dataContext.ethicsApplications.filter(e => e.studentId === studentId);
 
   return {
     student,
     principalName: principal ? principal.name : '',
     firmName: student ? student.firmName : '',
     contractStartDate: student ? student.contractStartDate : '',
+    contractEndDate: student ? student.contractEndDate : '',
     practicalPeriods: myPracticalPeriods,
     technicalModules: myTechnicalModules,
     skillRecords: mySkillRecords,
     ethicsProgress: myEthicsProgress,
-    ethicsScenarios: myEthicsScenarios,
+    ethicsModules: myEthicsModules,
+    ethicsApplications: myEthicsApplications,
     // Mutators
     addPracticalPeriod: dataContext.addPracticalPeriod,
     updatePracticalPeriod: dataContext.updatePracticalPeriod,
     addSkillRecord: dataContext.addSkillRecord,
     updateSkillRecord: dataContext.updateSkillRecord,
-    addEthicsScenario: dataContext.addEthicsScenario,
-    updateEthicsScenario: dataContext.updateEthicsScenario,
+    addEthicsApplication: dataContext.addEthicsApplication,
+    updateEthicsModule: dataContext.updateEthicsModule,
     updateEthicsProgress: dataContext.updateEthicsProgress,
     updateTechnicalModule: dataContext.updateTechnicalModule,
   };

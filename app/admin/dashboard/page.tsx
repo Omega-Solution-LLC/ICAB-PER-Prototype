@@ -11,12 +11,12 @@ import { ApprovalsPreviewTable } from '@/components/admin/approvals-preview-tabl
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function AdminDashboard() {
-  const { principal, students, allPracticalPeriods, allSkillRecords, allEthicsScenarios } = useAdminData();
+  const { principal, students, allPracticalPeriods, allSkillRecords, allEthicsApplications } = useAdminData();
 
   const pendingApprovalsCount = 
     allPracticalPeriods.filter(p => p.status === 'submitted').length +
     allSkillRecords.filter(s => s.status === 'submitted').length +
-    allEthicsScenarios.filter(s => s.status === 'submitted').length;
+    allEthicsApplications.filter(s => s.status === 'submitted').length;
 
   const lineChartData = [
     { month: 'Jan', approvals: 12 },
@@ -27,7 +27,7 @@ export default function AdminDashboard() {
   ];
 
   const barChartData = [
-    { name: 'Practical', completed: 45, pending: 12 },
+    { name: 'Work Exp', completed: 45, pending: 12 },
     { name: 'Technical', completed: 60, pending: 0 },
     { name: 'Skills', completed: 20, pending: 15 },
     { name: 'Ethics', completed: 30, pending: 5 }

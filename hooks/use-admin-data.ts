@@ -15,10 +15,12 @@ export function useAdminData() {
     allPracticalPeriods: dataContext.practicalPeriods,
     allTechnicalModules: dataContext.technicalModules,
     allSkillRecords: dataContext.skillRecords,
-    allEthicsScenarios: dataContext.ethicsScenarios,
+    allEthicsModules: dataContext.ethicsModules,
+    allEthicsApplications: dataContext.ethicsApplications,
     // Methods
     updatePracticalPeriod: dataContext.updatePracticalPeriod,
     updateSkillRecord: dataContext.updateSkillRecord,
-    updateEthicsScenario: dataContext.updateEthicsScenario,
+    updateEthicsApplication: dataContext.updateEthicsApplication,
+    updateEthicsModule: dataContext.updateEthicsModule,
   };
 }

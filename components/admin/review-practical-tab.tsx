@@ -66,7 +66,7 @@ export function ReviewPracticalTab({ studentId }: { studentId: string }) {
   const periodsWithFeedback = periods.filter(p => p.principalFeedback);
 
   return (
-    <ReviewTab title="Practical Experience Review" description="Review and approve six-monthly experience logs.">
+    <ReviewTab title="Work Experience Review" description="Review and approve six-monthly work experience logs.">
       <DataTable columns={columns} data={periods} />
 
       {periodsWithFeedback.length > 0 && (

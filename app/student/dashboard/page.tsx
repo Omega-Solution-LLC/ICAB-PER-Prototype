@@ -1,14 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { DashboardSidebar } from "@/components/student/dashboard-sidebar";
 
 export default function StudentDashboard() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace("/student/practical-experience");
-  }, [router]);
-
-  return null;
+  return (
+    <div className="max-w-4xl mx-auto py-2">
+      <DashboardSidebar />
+    </div>
+  );
 }

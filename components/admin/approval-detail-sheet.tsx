@@ -13,7 +13,7 @@ export interface ApprovalDetailSheetProps {
 }
 
 export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailSheetProps) {
-  const { updatePracticalPeriod, updateSkillRecord, updateEthicsScenario, students } = useAdminData();
+  const { updatePracticalPeriod, updateSkillRecord, updateEthicsApplication, students } = useAdminData();
   
   if (!record) return null;
 
@@ -22,7 +22,7 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
   const handleApprove = (feedback: string) => {
     if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'approved', principalFeedback: feedback });
     if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'approved', principalFeedback: feedback });
-    if (record.type === 'Ethics Scenario') updateEthicsScenario(record.id as string, { status: 'approved', principalFeedback: feedback });
+    if (record.type === 'Ethics Application') updateEthicsApplication(record.id as string, { status: 'approved', principalFeedback: feedback });
     
     toast.success(`${record.type} approved successfully`);
     onOpenChange(false);
@@ -31,7 +31,7 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
   const handleRequestChanges = (feedback: string) => {
     if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
     if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
-    if (record.type === 'Ethics Scenario') updateEthicsScenario(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
+    if (record.type === 'Ethics Application') updateEthicsApplication(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
     
     toast.success("Changes requested");
     onOpenChange(false);
@@ -92,36 +92,18 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
       );
     }
 
-    if (record.type === 'Ethics Scenario') {
-      const principles = record.principlesApplied as string[];
+    if (record.type === 'Ethics Application') {
+      const answers = record.answers as Record<string, string>;
       return (
         <div className="space-y-4">
-          <h4 className="font-semibold text-slate-900">{record.dilemma as string}</h4>
-          
-          <div>
-            <span className="text-sm font-medium text-slate-700 block mb-1">Scenario Details</span>
-            <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded">{record.description as string}</p>
-          </div>
-          
-          <div className="flex gap-2 flex-wrap">
-            {principles && principles.map(p => (
-              <span key={p} className="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded text-xs capitalize">{p.replace('-', ' ')}</span>
-            ))}
-          </div>
-
+          <p className="font-medium text-slate-900">{record.periodLabel as string}</p>
           <div className="space-y-4 pt-4 border-t border-slate-100">
-             <div>
-               <span className="text-sm font-semibold capitalize text-slate-700 block mb-1">Actions Taken</span>
-               <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded">{record.actionsTaken as string}</div>
-             </div>
-             <div>
-               <span className="text-sm font-semibold capitalize text-slate-700 block mb-1">Reflection</span>
-               <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded">{record.reflection as string}</div>
-             </div>
-             <div>
-               <span className="text-sm font-semibold capitalize text-slate-700 block mb-1">Justification</span>
-               <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded">{record.justification as string}</div>
-             </div>
+             {answers && Object.entries(answers).map(([k, v], i) => (
+               <div key={k}>
+                 <span className="text-sm font-semibold text-slate-700 block mb-1">Question {i + 1}</span>
+                 <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded">{v}</div>
+               </div>
+             ))}
           </div>
         </div>
       );

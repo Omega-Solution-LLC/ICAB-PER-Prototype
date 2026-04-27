@@ -87,7 +87,7 @@ export default function StudentProfile() {
           </div>
           <div className="bg-gray-50 px-5 py-5">
             <InfoRow label="Accounting Firm" value={student.firmName} />
-            <InfoRow label="Principal Name" value="M. Hasan FCA" />
+            <InfoRow label="Principal Name" value="Sabbir Hosen FCA" />
             <InfoRow
               label="Contract Start Date"
               value={student.contractStartDate}
