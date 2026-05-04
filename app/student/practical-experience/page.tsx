@@ -38,6 +38,7 @@ export default function PracticalWorkExperience() {
 
   const handleAddSubmit = async (data: PracticalPeriodFormData) => {
     addPracticalPeriod({
+      studentId: 's1', // Prototype defaults to s1
       label: data.label,
       startDate: data.startDate,
       endDate: data.endDate,
@@ -45,7 +46,6 @@ export default function PracticalWorkExperience() {
       daysStatAudit: data.daysStatAudit,
       daysOtherAudit: data.daysOtherAudit,
       daysNonAudit: data.daysNonAudit,
-      status: 'submitted',
       submittedAt: new Date().toISOString()
     });
     toast.success("Work experience period added successfully");
