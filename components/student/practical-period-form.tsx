@@ -145,16 +145,22 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
               <Input type="number" min="0" />
             </FormField>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100 mt-4">
-              <FormField name="daysStatAudit" label="Statutory">
-                <Input type="number" min="0" />
-              </FormField>
-              <FormField name="daysOtherAudit" label="Other Audit">
-                <Input type="number" min="0" />
-              </FormField>
-              <FormField name="daysNonAudit" label="Non-Audit">
-                <Input type="number" min="0" />
-              </FormField>
+            <div className="mt-6 border border-blue-100 rounded-lg overflow-hidden">
+              <div className="bg-blue-50/50 px-4 py-3 border-b border-blue-100">
+                <h4 className="text-sm font-semibold text-blue-900">Audit Qualification Tracking (Optional)</h4>
+                <p className="text-[11px] text-blue-700 mt-0.5">If you are pursuing the Audit Qualification, break down your total days above into these categories.</p>
+              </div>
+              <div className="p-4 bg-white grid grid-cols-3 gap-4">
+                <FormField name="daysStatAudit" label="Statutory Audit">
+                  <Input type="number" min="0" />
+                </FormField>
+                <FormField name="daysOtherAudit" label="Other Audit">
+                  <Input type="number" min="0" />
+                </FormField>
+                <FormField name="daysNonAudit" label="Non-Audit">
+                  <Input type="number" min="0" />
+                </FormField>
+              </div>
             </div>
 
             <div className="pt-6 flex justify-end gap-3 border-t border-slate-100 mt-4">

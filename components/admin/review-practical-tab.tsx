@@ -65,8 +65,40 @@ export function ReviewPracticalTab({ studentId }: { studentId: string }) {
   // Periods that have feedback to display below the table
   const periodsWithFeedback = periods.filter(p => p.principalFeedback);
 
+  // Calculate AQ Progress from approved periods
+  const approvedPeriods = periods.filter(p => p.status === 'approved');
+  const totalStatAuditDays = approvedPeriods.reduce((sum, p) => sum + (p.daysStatAudit || 0), 0);
+  const totalOtherAuditDays = approvedPeriods.reduce((sum, p) => sum + (p.daysOtherAudit || 0), 0);
+  const totalAuditDays = totalStatAuditDays + totalOtherAuditDays;
+  
+  const statAuditPct = Math.min((totalStatAuditDays / 110) * 100, 100);
+  const totalAuditPct = Math.min((totalAuditDays / 220) * 100, 100);
+
   return (
     <ReviewTab title="Work Experience Review" description="Review and approve six-monthly work experience logs.">
+      {/* AQ Progress Summary Card */}
+      <div className="mb-6 bg-blue-50/50 rounded-xl border border-blue-100 p-5 flex flex-col md:flex-row gap-6 items-center">
+        <div className="flex-1 w-full">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm font-semibold text-slate-700">Statutory Audit (Approved)</span>
+            <span className="text-sm font-medium text-slate-600">{totalStatAuditDays} / 110 days</span>
+          </div>
+          <div className="w-full bg-slate-200 rounded-full h-2 mb-1">
+            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${statAuditPct}%` }}></div>
+          </div>
+        </div>
+        
+        <div className="flex-1 w-full">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm font-semibold text-slate-700">Total Audit (Approved)</span>
+            <span className="text-sm font-medium text-slate-600">{totalAuditDays} / 220 days</span>
+          </div>
+          <div className="w-full bg-slate-200 rounded-full h-2 mb-1">
+            <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${totalAuditPct}%` }}></div>
+          </div>
+        </div>
+      </div>
+
       <DataTable columns={columns} data={periods} />
 
       {periodsWithFeedback.length > 0 && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { ModuleAssessmentDialog } from "@/components/shared/module-assessment-dialog";
 import { AssessmentBookingDialog } from "@/components/shared/assessment-booking-dialog";
 import { useStudentData } from "@/hooks/use-student-data";
 import { TechnicalModule } from "@/types";
@@ -10,10 +11,9 @@ import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/prog
 
 export default function TechnicalDevelopmentPage() {
   const { technicalModules, updateTechnicalModule } = useStudentData();
-  const [bookingModule, setBookingModule] = useState<
-    TechnicalModule | undefined
-  >();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [activeModule, setActiveModule] = useState<TechnicalModule | undefined>();
+  const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   const completedModulesCount = technicalModules.filter(
     (m) => m.status === "completed",
@@ -22,25 +22,38 @@ export default function TechnicalDevelopmentPage() {
 
   const modPct = Math.min((completedModulesCount / totalModules) * 100, 100);
 
-  const handleBookAssessment = (module: TechnicalModule) => {
-    setBookingModule(module);
-    setIsDialogOpen(true);
+  const handleTakeAssessment = (module: TechnicalModule) => {
+    setActiveModule(module);
+    setIsAssessmentOpen(true);
   };
 
-  const handleStartReview = (module: TechnicalModule) => {
-    toast.info(`Opening review materials for ${module.name}`);
+  const handleBookExam = (module: TechnicalModule) => {
+    setActiveModule(module);
+    setIsBookingOpen(true);
   };
 
-  const confirmBooking = async (date: string) => {
-    if (!bookingModule) return;
+  const handleCompleteAssessment = async (score: number) => {
+    if (!activeModule) return;
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    updateTechnicalModule(bookingModule.id, {
+    updateTechnicalModule(activeModule.id, {
       status: "assessment-pending",
+      score: score,
+      lastAttemptAt: new Date().toISOString().split("T")[0]
     });
 
-    toast.success(`Lab assessment booked for ${date} successfully.`);
+    toast.success(`Assessment completed successfully with a score of ${score}%! You can now book your exam.`);
+  };
+
+  const handleConfirmBooking = async (date: string) => {
+    if (!activeModule) return;
+    
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    updateTechnicalModule(activeModule.id, {
+      status: "completed"
+    });
+
+    toast.success(`Exam successfully booked for ${date}.`);
   };
 
   return (
@@ -85,10 +98,9 @@ export default function TechnicalDevelopmentPage() {
             <p className="text-sm text-gray-600 leading-relaxed font-normal">
               IES 2 technical modules focus on developing your core competencies
               in accounting, audit, tax, and other specialist areas. You must
-              complete the modules in sequence, with each building on the
-              knowledge and skills developed in the previous module. Each module
-              includes review materials and a lab assessment that must be
-              successfully completed before you can progress to the next module.
+              complete the modules in sequence. For each module, you must first
+              pass the inline assessment. Only after passing the assessment can you
+              book the final exam to complete the module.
             </p>
           </div>
         </div>
@@ -101,62 +113,70 @@ export default function TechnicalDevelopmentPage() {
 
           <div className="bg-gray-50 border-t-0 border-gray-200 px-5 py-6">
             <div className="grid grid-cols-2 gap-4">
-              {technicalModules.map((module) => (
-                <div
-                  key={module.id}
-                  className="border border-gray-200 bg-white p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
-                  <div>
-                    <div className="flex items-start justify-between mb-2">
-                      <p
-                        className="font-semibold text-sm"
-                        style={{ color: "var(--color-icab-red)" }}>
-                        {module.name}
-                      </p>
-                      {module.status === "completed" && (
-                        <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
-                          Completed
-                        </span>
-                      )}
-                      {module.status === "in-progress" && (
-                        <span className="text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded">
-                          In Progress
-                        </span>
-                      )}
-                      {module.status === "not-started" && (
-                        <span className="text-xs font-semibold text-gray-600 bg-gray-200 px-2 py-1 rounded">
-                          Not Started
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-700 leading-snug mb-3 font-normal">
-                      {module.description ||
-                        "Complete the review materials and lab assessment"}
-                    </p>
-                  </div>
+              {technicalModules.map((module) => {
+                const canTakeAssessment = module.status === "not-started" || module.status === "in-progress";
+                const canBookExam = module.status === "assessment-pending";
+                const isCompleted = module.status === "completed";
 
-                  <div className="flex gap-2 pt-3 border-t border-gray-200">
-                    <button
-                      onClick={() => handleStartReview(module)}
-                      className="flex-1 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded hover:bg-gray-200 transition-colors cursor-pointer">
-                      Review Materials
-                    </button>
-                    <button
-                      onClick={() => handleBookAssessment(module)}
-                      disabled={module.status === "not-started"}
-                      className="flex-1 px-3 py-2 text-xs font-medium text-white rounded hover:shadow-sm transition-shadow cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-                      style={{
-                        backgroundColor:
-                          module.status === "not-started"
-                            ? undefined
-                            : "var(--color-icab-red)",
-                      }}>
-                      {module.status === "completed"
-                        ? "Completed"
-                        : "Book Assessment"}
-                    </button>
+                return (
+                  <div
+                    key={module.id}
+                    className="border border-gray-200 bg-white p-4 flex flex-col justify-between hover:shadow-sm transition-shadow">
+                    <div>
+                      <div className="flex items-start justify-between mb-2">
+                        <p
+                          className="font-semibold text-sm"
+                          style={{ color: "var(--color-icab-red)" }}>
+                          {module.name}
+                        </p>
+                        {isCompleted && (
+                          <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
+                            Completed
+                          </span>
+                        )}
+                        {canTakeAssessment && (
+                          <span className="text-xs font-semibold text-gray-600 bg-gray-200 px-2 py-1 rounded">
+                            {module.status === "not-started" ? "Not Started" : "In Progress"}
+                          </span>
+                        )}
+                        {canBookExam && (
+                          <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded">
+                            Pending Exam
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-700 leading-snug mb-3 font-normal">
+                        {module.description ||
+                          "Complete the assessment, then book your exam."}
+                      </p>
+                    </div>
+
+                    <div className="flex gap-2 pt-3 border-t border-gray-200">
+                      <button
+                        onClick={() => handleTakeAssessment(module)}
+                        disabled={!canTakeAssessment}
+                        className={`flex-1 px-3 py-2 text-xs font-medium text-white rounded transition-shadow ${
+                          canTakeAssessment
+                            ? "hover:shadow-sm cursor-pointer"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        style={canTakeAssessment ? { backgroundColor: "var(--color-icab-red)" } : {}}>
+                        {canBookExam || isCompleted ? "Assessment Passed" : "Take Assessment"}
+                      </button>
+                      <button
+                        onClick={() => handleBookExam(module)}
+                        disabled={!canBookExam}
+                        className={`flex-1 px-3 py-2 text-xs font-medium text-white rounded transition-shadow ${
+                          canBookExam
+                            ? "bg-blue-600 hover:shadow-sm cursor-pointer hover:bg-blue-700"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}>
+                        {isCompleted ? "Exam Booked" : "Book Exam"}
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -201,12 +221,19 @@ export default function TechnicalDevelopmentPage() {
         </div>
       </div>
 
+      <ModuleAssessmentDialog
+        open={isAssessmentOpen}
+        onOpenChange={setIsAssessmentOpen}
+        moduleName={activeModule?.name}
+        onComplete={handleCompleteAssessment}
+      />
+
       <AssessmentBookingDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        moduleName={bookingModule?.name}
+        open={isBookingOpen}
+        onOpenChange={setIsBookingOpen}
+        moduleName={activeModule?.name}
         moduleType="technical"
-        onBook={confirmBooking}
+        onBook={handleConfirmBooking}
       />
     </div>
   );
