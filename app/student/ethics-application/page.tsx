@@ -39,18 +39,7 @@ export default function EthicsApplicationPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans relative">
-      {/* ── Locked Overlay ── */}
-      <div className="absolute inset-0 z-50 flex items-start justify-center pt-[20vh] bg-white/40 backdrop-blur-[4px]">
-        <div className="bg-white px-8 py-6 rounded-2xl shadow-lg border border-gray-200 text-center flex flex-col items-center max-w-sm mx-4">
-          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <Lock className="w-6 h-6 text-gray-500" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Locked</h2>
-
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 py-6 blur-sm pointer-events-none select-none opacity-60">
+      <div className="max-w-4xl mx-auto px-4 py-6">
         {/* ── Title ── */}
         <h1
           className="text-3xl font-semibold mb-6"
