@@ -21,9 +21,12 @@ export function useStudentData() {
   const myEthicsProgress = dataContext.ethicsProgress;
   const myEthicsModules = dataContext.ethicsModules;
   const myEthicsApplications = dataContext.ethicsApplications.filter(e => e.studentId === studentId);
+  const myAuditEngagements = dataContext.auditEngagements?.filter(a => a.studentId === studentId) || [];
 
   return {
     student,
+    auditEngagements: myAuditEngagements,
+    addAuditEngagement: dataContext.addAuditEngagement,
     principalName: principal ? principal.name : '',
     firmName: student ? student.firmName : '',
     contractStartDate: student ? student.contractStartDate : '',

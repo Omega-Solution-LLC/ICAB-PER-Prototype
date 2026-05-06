@@ -85,8 +85,26 @@ export const DEMO_PRACTICAL_PERIODS: PracticalExperiencePeriod[] = [
     startDate: '2024-07-01',
     endDate: '2024-12-31',
     daysWorked: 120,
-    daysStatAudit: 60,
-    daysOtherAudit: 40,
+    daysStatAudit: 60,    auditEngagements: [
+      {
+        id: "a1",
+        clientName: "Alpha Corp Ltd",
+        startDate: "2023-01-10",
+        endDate: "2023-02-15",
+        role: "Audit Junior",
+        areaOfWork: "Inventory & Cash",
+        daysWorked: 25
+      },
+      {
+        id: "a2",
+        clientName: "Beta Holdings Inc",
+        startDate: "2023-03-01",
+        endDate: "2023-04-10",
+        role: "Audit Junior",
+        areaOfWork: "Revenue & Receivables",
+        daysWorked: 25
+      }
+    ],    daysOtherAudit: 40,
     daysNonAudit: 20,
     status: 'submitted',
     submittedAt: '2025-01-05'

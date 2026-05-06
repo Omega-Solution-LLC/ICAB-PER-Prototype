@@ -1,4 +1,5 @@
 "use client";
+import React from 'react';
 
 import { useState } from "react";
 import { Briefcase, User, Calendar, Check, Circle, ShieldCheck } from "lucide-react";
@@ -7,6 +8,7 @@ import { format } from "date-fns";
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 import { PracticalPeriodForm, PracticalPeriodFormData } from "@/components/student/practical-period-form";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { AuditEngagementForm, AuditEngagementFormData } from "@/components/student/audit-engagement-form";
 import { toast } from "sonner";
 
 export default function PracticalWorkExperience() {
@@ -16,21 +18,35 @@ export default function PracticalWorkExperience() {
     contractStartDate, 
     contractEndDate,
     practicalPeriods,
-    addPracticalPeriod
+    addPracticalPeriod,
+    auditEngagements,
+    addAuditEngagement
   } = useStudentData();
   
   const formattedStartDate = contractStartDate ? format(new Date(contractStartDate), "d MMM yyyy") : "";
   const formattedEndDate = contractEndDate ? format(new Date(contractEndDate), "d MMM yyyy") : "";
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isStatAuditFormOpen, setIsStatAuditFormOpen] = useState(false);
+  const [isOtherAuditFormOpen, setIsOtherAuditFormOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("work");
 
   // General PWE Calculation
   const totalPWEDays = practicalPeriods.reduce((sum, p) => sum + (p.daysWorked || 0), 0);
   const pwePct = Math.min((totalPWEDays / 450) * 100, 100);
 
-  // AQ Calculation
-  const totalStatAuditDays = practicalPeriods.reduce((sum, p) => sum + (p.daysStatAudit || 0), 0);
-  const totalOtherAuditDays = practicalPeriods.reduce((sum, p) => sum + (p.daysOtherAudit || 0), 0);
+  // AQ Calculation using new data structure (or a combination)
+  const legacyStatDays = practicalPeriods.reduce((sum, p) => sum + (p.daysStatAudit || 0), 0);
+  const legacyOtherDays = practicalPeriods.reduce((sum, p) => sum + (p.daysOtherAudit || 0), 0);
+  
+  const statutoryAudits = (auditEngagements || []).filter(a => a.type === 'statutory');
+  const otherAudits = (auditEngagements || []).filter(a => a.type === 'other');
+  
+  const formStatDays = statutoryAudits.reduce((sum, a) => sum + a.daysWorked, 0);
+  const formOtherDays = otherAudits.reduce((sum, a) => sum + a.daysWorked, 0);
+
+  const totalStatAuditDays = legacyStatDays + formStatDays;
+  const totalOtherAuditDays = legacyOtherDays + formOtherDays;
   const totalAuditDays = totalStatAuditDays + totalOtherAuditDays;
   
   const statAuditPct = Math.min((totalStatAuditDays / 110) * 100, 100);
@@ -43,13 +59,31 @@ export default function PracticalWorkExperience() {
       startDate: data.startDate,
       endDate: data.endDate,
       daysWorked: data.daysWorked,
-      daysStatAudit: data.daysStatAudit,
-      daysOtherAudit: data.daysOtherAudit,
-      daysNonAudit: data.daysNonAudit,
+      daysStatAudit: 0,
+      daysOtherAudit: 0,
+      daysNonAudit: 0,
       submittedAt: new Date().toISOString()
     });
     toast.success("Work experience period added successfully");
   };
+
+  const handleAddStatAudit = async (data: AuditEngagementFormData) => {
+      addAuditEngagement({
+          studentId: 's1',
+          type: 'statutory',
+          ...data
+      });
+      toast.success("Statutory Audit added successfully");
+  };
+
+  const handleAddOtherAudit = async (data: AuditEngagementFormData) => {
+    addAuditEngagement({
+        studentId: 's1',
+        type: 'other',
+        ...data
+    });
+    toast.success("Other Audit added successfully");
+};
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 font-sans space-y-8">
@@ -169,104 +203,191 @@ export default function PracticalWorkExperience() {
         </div>
       </div>
 
-      {/* Main Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-          <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-            Work experience records
-          </p>
-          <button
-            onClick={() => setIsFormOpen(true)}
-            className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
-            style={{ backgroundColor: "var(--color-icab-red)" }}>
-            + Add work experience
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 align-middle bg-gray-700" rowSpan={2}>
-                  Period
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 align-middle bg-gray-700" rowSpan={2}>
-                  Start date
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 align-middle bg-gray-700" rowSpan={2}>
-                  End date
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-b border-gray-600 bg-gray-700" colSpan={4}>
-                  Work experience gained (in days)
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 align-middle bg-gray-700" rowSpan={2}>
-                  Status
-                </th>
-              </tr>
-              <tr>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 bg-gray-700 border-t border-t-gray-600">
-                  Total Days
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 bg-gray-700 border-t border-t-gray-600">
-                  Stat. Audit
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 bg-gray-700 border-t border-t-gray-600">
-                  Other Audit
-                </th>
-                <th className="text-white text-xs font-semibold text-center px-3 py-3 border-r border-gray-600 bg-gray-700 border-t border-t-gray-600">
-                  Non-Audit
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {practicalPeriods.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-500 text-sm">
-                    No records found. Click "Add work experience" to log a period.
-                  </td>
-                </tr>
-              ) : (
-                practicalPeriods.map((p) => (
-                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="px-3 py-4 text-sm font-medium text-gray-900 text-center">
-                      {p.label}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                      {format(new Date(p.startDate), "d MMM yyyy")}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-700 text-center whitespace-nowrap">
-                      {format(new Date(p.endDate), "d MMM yyyy")}
-                    </td>
-                    <td className="px-3 py-4 text-sm font-semibold text-gray-900 text-center bg-gray-50/50">
-                      {p.daysWorked}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-700 text-center">
-                      {p.daysStatAudit}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-700 text-center">
-                      {p.daysOtherAudit}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-700 text-center">
-                      {p.daysNonAudit}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-center flex justify-center items-center h-full">
-                      <StatusBadge status={p.status} />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="flex flex-wrap gap-2 border-b border-gray-200">
+        <button
+          onClick={() => setActiveTab("work")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "work" ? "border-icab-red text-icab-red" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          style={activeTab === "work" ? { borderColor: "var(--color-icab-red)", color: "var(--color-icab-red)" } : {}}
+        >
+          Work Experience Records
+        </button>
+        <button
+          onClick={() => setActiveTab("stat")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "stat" ? "border-icab-red text-icab-red" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          style={activeTab === "stat" ? { borderColor: "var(--color-icab-red)", color: "var(--color-icab-red)" } : {}}
+        >
+          Statutory Audit
+        </button>
+        <button
+          onClick={() => setActiveTab("other")}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === "other" ? "border-icab-red text-icab-red" : "border-transparent text-gray-500 hover:text-gray-700"}`}
+          style={activeTab === "other" ? { borderColor: "var(--color-icab-red)", color: "var(--color-icab-red)" } : {}}
+        >
+          Other Audit
+        </button>
       </div>
 
+      {activeTab === "work" && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              Work experience records
+            </p>
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
+              style={{ backgroundColor: "var(--color-icab-red)" }}>
+              + Add work experience
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Period</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Start date</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">End date</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Days Worked</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {practicalPeriods.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-gray-500 text-sm">
+                      No records found. Click "Add work experience" to log a period.
+                    </td>
+                  </tr>
+                ) : (
+                  practicalPeriods.map((p) => (
+                    <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-center font-medium text-gray-900">{p.label}</td>
+                      <td className="px-4 py-3 text-sm text-center text-gray-600">{format(new Date(p.startDate), "d MMM yyyy")}</td>
+                      <td className="px-4 py-3 text-sm text-center text-gray-600">{format(new Date(p.endDate), "d MMM yyyy")}</td>
+                      <td className="px-4 py-3 text-sm text-center font-semibold text-gray-900">{p.daysWorked}</td>
+                      <td className="px-4 py-3 text-sm text-center"><StatusBadge status={p.status} /></td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "stat" && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              Statutory Audit Records
+            </p>
+            <button
+              onClick={() => setIsStatAuditFormOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
+              style={{ backgroundColor: "var(--color-icab-red)" }}>
+              + Add Statutory Audit
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Client Name</th>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Dates</th>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Role</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Days</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {statutoryAudits.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-gray-500 text-sm">
+                      No statutory audit records found. Click "Add Statutory Audit" to log one.
+                    </td>
+                  </tr>
+                ) : (
+                  statutoryAudits.map((a) => (
+                    <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-left font-medium text-gray-900">{a.clientName}</td>
+                      <td className="px-4 py-3 text-sm text-left text-gray-600">{format(new Date(a.startDate), "MMM yyyy")} - {format(new Date(a.endDate), "MMM yyyy")}</td>
+                      <td className="px-4 py-3 text-sm text-left text-gray-600">{a.role}</td>
+                      <td className="px-4 py-3 text-sm text-center font-semibold text-gray-900">{a.daysWorked}</td>
+                      <td className="px-4 py-3 text-sm text-center"><StatusBadge status={a.status || 'draft'} /></td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "other" && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+            <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              Other Audit Records
+            </p>
+            <button
+              onClick={() => setIsOtherAuditFormOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
+              style={{ backgroundColor: "var(--color-icab-red)" }}>
+              + Add Other Audit
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Client Name</th>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Dates</th>
+                  <th className="text-gray-600 text-xs font-semibold text-left px-4 py-3 border-b border-gray-200 bg-gray-50/50">Role</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Days</th>
+                  <th className="text-gray-600 text-xs font-semibold text-center px-4 py-3 border-b border-gray-200 bg-gray-50/50">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {otherAudits.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-8 text-gray-500 text-sm">
+                      No other audit records found. Click "Add Other Audit" to log one.
+                    </td>
+                  </tr>
+                ) : (
+                  otherAudits.map((a) => (
+                    <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-sm text-left font-medium text-gray-900">{a.clientName}</td>
+                      <td className="px-4 py-3 text-sm text-left text-gray-600">{format(new Date(a.startDate), "MMM yyyy")} - {format(new Date(a.endDate), "MMM yyyy")}</td>
+                      <td className="px-4 py-3 text-sm text-left text-gray-600">{a.role}</td>
+                      <td className="px-4 py-3 text-sm text-center font-semibold text-gray-900">{a.daysWorked}</td>
+                      <td className="px-4 py-3 text-sm text-center"><StatusBadge status={a.status || 'draft'} /></td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Forms */}
       <PracticalPeriodForm 
         open={isFormOpen} 
-        onOpenChange={setIsFormOpen}
-        onSubmit={handleAddSubmit}
-        firmName={firmName}
-        principalName={principalName}
-        articledshipStartDate={formattedStartDate}
+        onOpenChange={setIsFormOpen} 
+        onSubmit={handleAddSubmit} 
+      />
+      <AuditEngagementForm
+        open={isStatAuditFormOpen}
+        onOpenChange={setIsStatAuditFormOpen}
+        onSubmit={handleAddStatAudit}
+        title="Statutory Audit"
+      />
+      <AuditEngagementForm
+        open={isOtherAuditFormOpen}
+        onOpenChange={setIsOtherAuditFormOpen}
+        onSubmit={handleAddOtherAudit}
+        title="Other Audit"
       />
     </div>
   );

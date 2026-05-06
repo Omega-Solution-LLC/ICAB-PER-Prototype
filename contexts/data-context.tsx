@@ -19,6 +19,7 @@ type DataContextType = {
   ethicsProgress: EthicsTrainingProgress;
   ethicsModules: EthicsModule[];
   ethicsApplications: EthicsApplication[];
+  auditEngagements: import('@/types').AuditEngagement[];
   
   // Mutators
   addPracticalPeriod: (period: Omit<PracticalExperiencePeriod, 'id' | 'status'>) => void;
@@ -30,6 +31,7 @@ type DataContextType = {
   updateEthicsModule: (id: string, updates: Partial<EthicsModule>) => void;
   updateEthicsProgress: (updates: Partial<EthicsTrainingProgress>) => void;
   updateTechnicalModule: (id: string, updates: Partial<TechnicalModule>) => void;
+  addAuditEngagement: (engagement: Omit<import('@/types').AuditEngagement, 'id' | 'status'>) => void;
 };
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [ethicsProgress, setEthicsProgress] = useState<EthicsTrainingProgress>(DEMO_ETHICS_PROGRESS);
   const [ethicsModules, setEthicsModules] = useState<EthicsModule[]>(DEMO_ETHICS_MODULES);
   const [ethicsApplications, setEthicsApplications] = useState<EthicsApplication[]>(DEMO_ETHICS_APPLICATIONS);
+  const [auditEngagements, setAuditEngagements] = useState<import('@/types').AuditEngagement[]>([]);
 
   const addPracticalPeriod = (period: Omit<PracticalExperiencePeriod, 'id' | 'status'>) => {
     const newPeriod: PracticalExperiencePeriod = { ...period, id: `pe-${Date.now()}`, status: 'submitted' };
@@ -83,11 +86,16 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setTechnicalModules(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
   };
 
+  const addAuditEngagement = (engagement: Omit<import('@/types').AuditEngagement, 'id' | 'status'>) => {
+    const newEngagement: import('@/types').AuditEngagement = { ...engagement, id: `audit-${Date.now()}`, status: 'submitted' };
+    setAuditEngagements(prev => [...prev, newEngagement]);
+  };
+
   return (
     <DataContext.Provider value={{
-      students, principal, practicalPeriods, technicalModules, skillRecords, ethicsProgress, ethicsModules, ethicsApplications,
+      students, principal, practicalPeriods, technicalModules, skillRecords, ethicsProgress, ethicsModules, ethicsApplications, auditEngagements,
       addPracticalPeriod, updatePracticalPeriod, addSkillRecord, updateSkillRecord, addEthicsApplication, updateEthicsApplication,
-      updateEthicsModule, updateEthicsProgress, updateTechnicalModule
+      updateEthicsModule, updateEthicsProgress, updateTechnicalModule, addAuditEngagement
     }}>
       {children}
     </DataContext.Provider>

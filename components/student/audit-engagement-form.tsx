@@ -6,33 +6,33 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from '@/components/shared/form-field';
-import { PracticalExperiencePeriod } from '@/types';
+import { AuditEngagement } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   id: z.string().optional(),
-  label: z.string().min(1, "Period label is required"),
+  clientName: z.string().min(1, "Client Name is required"),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
+  role: z.string().min(1, "Role is required"),
+  areaOfWork: z.string().min(1, "Area of Work is required"),
   daysWorked: z.coerce.number().min(0, "Must be positive"),
 });
 
-export type PracticalPeriodFormData = z.infer<typeof formSchema>;
+export type AuditEngagementFormData = z.infer<typeof formSchema>;
 
-export interface PracticalPeriodFormProps {
+export interface AuditEngagementFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultValues?: Partial<PracticalExperiencePeriod>;
-  onSubmit: (data: PracticalPeriodFormData) => Promise<void>;
-  firmName?: string;
-  principalName?: string;
-  articledshipStartDate?: string;
+  defaultValues?: Partial<AuditEngagement>;
+  onSubmit: (data: AuditEngagementFormData) => Promise<void>;
+  title: string;
 }
 
-export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmit, firmName, principalName, articledshipStartDate }: PracticalPeriodFormProps) {
+export function AuditEngagementForm({ open, onOpenChange, defaultValues, onSubmit, title }: AuditEngagementFormProps) {
   const methods = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { id: undefined, label: "", startDate: "", endDate: "", daysWorked: 0 }
+    defaultValues: { id: undefined, clientName: "", startDate: "", endDate: "", role: "", areaOfWork: "", daysWorked: 0 }
   });
 
   useEffect(() => {
@@ -40,13 +40,15 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
       if (defaultValues) {
         methods.reset({
           id: defaultValues.id,
-          label: defaultValues.label || "",
+          clientName: defaultValues.clientName || "",
           startDate: defaultValues.startDate || "",
           endDate: defaultValues.endDate || "",
+          role: defaultValues.role || "",
+          areaOfWork: defaultValues.areaOfWork || "",
           daysWorked: defaultValues.daysWorked || 0,
         });
       } else {
-        methods.reset({ id: undefined, label: "", startDate: "", endDate: "", daysWorked: 0 });
+        methods.reset({ id: undefined, clientName: "", startDate: "", endDate: "", role: "", areaOfWork: "", daysWorked: 0 });
       }
     }
   }, [open, defaultValues, methods]);
@@ -56,7 +58,7 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
   const handleSubmit = async (values: unknown) => {
     setIsPending(true);
     try {
-      await onSubmit(values as PracticalPeriodFormData);
+      await onSubmit(values as AuditEngagementFormData);
       onOpenChange(false);
     } catch (error) {
       console.error(error);
@@ -69,25 +71,14 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{defaultValues?.id ? "Edit Period" : "Add Period"}</DialogTitle>
+          <DialogTitle>{defaultValues?.id ? "Edit " + title : "Add " + title}</DialogTitle>
         </DialogHeader>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4 py-2 mt-2">
-            <div className="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border">
-              <div>
-                <label className="text-sm font-medium leading-none mb-1 block">Firm Name</label>
-                <Input value={firmName || ''} readOnly className="bg-slate-100 text-slate-500 cursor-not-allowed" tabIndex={-1} />
-              </div>
-              <div>
-                <label className="text-sm font-medium leading-none mb-1 block">Principal</label>
-                <Input value={principalName || ''} readOnly className="bg-slate-100 text-slate-500 cursor-not-allowed" tabIndex={-1} />
-              </div>
-            </div>
-
-            <FormField name="label" label="Period Label (e.g. Year 1 H1)">
-              <Input placeholder="Year X HX" />
+            <FormField name="clientName" label="Client Name">
+              <Input placeholder="Client XYZ" />
             </FormField>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <FormField name="startDate" label="Start Date">
@@ -101,7 +92,20 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
               </div>
             </div>
 
-            <FormField name="daysWorked" label="Total PWE Days Worked">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <FormField name="role" label="Role">
+                  <Input placeholder="Audit Junior" />
+                </FormField>
+              </div>
+              <div>
+                <FormField name="areaOfWork" label="Area of Work">
+                  <Input placeholder="Fieldwork" />
+                </FormField>
+              </div>
+            </div>
+
+            <FormField name="daysWorked" label="Total Days Worked">
               <Input type="number" min="0" />
             </FormField>
 
@@ -109,7 +113,7 @@ export function PracticalPeriodForm({ open, onOpenChange, defaultValues, onSubmi
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>Cancel</Button>
               <Button type="submit" className="bg-icab-red hover:bg-icab-wine text-white" disabled={isPending}>
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isPending ? "Saving..." : (defaultValues?.id ? "Update Period" : "Add Period")}
+                {isPending ? "Saving..." : (defaultValues?.id ? "Update" : "Add")}
               </Button>
             </div>
           </form>

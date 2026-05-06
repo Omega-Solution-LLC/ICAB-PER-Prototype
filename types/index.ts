@@ -27,6 +27,19 @@ export type Principal = User & {
 
 export type RecordStatus = 'draft' | 'submitted' | 'approved' | 'changes-requested' | 'in-progress' | 'completed' | 'not-started' | 'assessment-pending' | 'active' | 'at-risk' | 'transferred';
 
+export type AuditEngagement = {
+  id: string;
+  studentId?: string;
+  type?: 'statutory' | 'other';
+  clientName: string;
+  startDate: string;
+  endDate: string;
+  role: string;
+  areaOfWork: string;
+  daysWorked: number;
+  status?: RecordStatus;
+};
+
 export type PracticalExperiencePeriod = {
   id: string;
   studentId: string;
@@ -35,6 +48,7 @@ export type PracticalExperiencePeriod = {
   endDate: string;
   daysWorked: number;
   daysStatAudit: number;
+  auditEngagements?: AuditEngagement[]; // New field
   daysOtherAudit: number;
   daysNonAudit: number;
   status: RecordStatus;
