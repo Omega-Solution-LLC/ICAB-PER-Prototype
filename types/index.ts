@@ -30,7 +30,9 @@ export type RecordStatus = 'draft' | 'submitted' | 'approved' | 'changes-request
 export type AuditEngagement = {
   id: string;
   studentId?: string;
-  type?: 'statutory' | 'other';
+  type?: 'statutory' | 'other' | 'non-audit';
+  firmName?: string;
+  principalName?: string;
   clientName: string;
   startDate: string;
   endDate: string;
@@ -66,6 +68,10 @@ export type TechnicalModule = {
   attempts: number;
   lastAttemptAt?: string;
   score?: number;
+  responseQuestion?: string;
+  studentResponse?: string;
+  employerFeedback?: string;
+  approvedAt?: string;
 };
 
 export type SkillArea = {
@@ -109,6 +115,10 @@ export type EthicsModule = {
   attempts: number;
   lastAttemptAt?: string;
   score?: number;
+  responseQuestion?: string;
+  studentResponse?: string;
+  employerFeedback?: string;
+  approvedAt?: string;
 };
 export type EthicsApplication = {
   id: string;

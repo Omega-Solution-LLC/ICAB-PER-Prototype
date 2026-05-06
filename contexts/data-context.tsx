@@ -7,7 +7,8 @@ import {
 } from "@/types";
 import { 
   DEMO_STUDENTS, DEMO_PRINCIPAL, DEMO_PRACTICAL_PERIODS, 
-  DEMO_TECHNICAL_MODULES, DEMO_SKILL_RECORDS, DEMO_ETHICS_PROGRESS, DEMO_ETHICS_MODULES, DEMO_ETHICS_APPLICATIONS 
+  DEMO_TECHNICAL_MODULES, DEMO_SKILL_RECORDS, DEMO_ETHICS_PROGRESS, DEMO_ETHICS_MODULES, DEMO_ETHICS_APPLICATIONS,
+  DEMO_AUDIT_ENGAGEMENTS
 } from "@/lib/demo-data";
 
 type DataContextType = {
@@ -45,7 +46,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [ethicsProgress, setEthicsProgress] = useState<EthicsTrainingProgress>(DEMO_ETHICS_PROGRESS);
   const [ethicsModules, setEthicsModules] = useState<EthicsModule[]>(DEMO_ETHICS_MODULES);
   const [ethicsApplications, setEthicsApplications] = useState<EthicsApplication[]>(DEMO_ETHICS_APPLICATIONS);
-  const [auditEngagements, setAuditEngagements] = useState<import('@/types').AuditEngagement[]>([]);
+  const [auditEngagements, setAuditEngagements] = useState<import('@/types').AuditEngagement[]>(DEMO_AUDIT_ENGAGEMENTS);
 
   const addPracticalPeriod = (period: Omit<PracticalExperiencePeriod, 'id' | 'status'>) => {
     const newPeriod: PracticalExperiencePeriod = { ...period, id: `pe-${Date.now()}`, status: 'submitted' };

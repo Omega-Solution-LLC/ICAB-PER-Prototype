@@ -142,20 +142,19 @@ export const ETHICS_MODULES_SEED: Omit<
   "status" | "attempts" | "id"
 >[] = [
   {
-    name: "Module 1: Professional Integrity",
-    description: "Core concepts of professional integrity and accountability.",
+    name: "Professional skepticism and judgment",
+    description: "Apply a questioning mindset and make balanced professional judgments.",
+    responseQuestion: "Apply an inquiring mind when collecting and assessing data and information.",
   },
   {
-    name: "Module 2: Objectivity and Independence",
-    description: "Maintaining objectivity in fact and appearance.",
+    name: "Ethical principles",
+    description: "Uphold ethical standards and professional conduct in practice.",
+    responseQuestion: "Apply techniques to reduce bias when solving problems, forming judgments, making informed decisions, reaching well-reasoned conclusions, and communicating with a range of stakeholders.",
   },
   {
-    name: "Module 3: Confidentiality",
-    description: "Handling sensitive client and firm information securely.",
-  },
-  {
-    name: "Module 4: Professional Competence",
-    description: "Due care and continuing professional development.",
+    name: "Commitment to the public interest",
+    description: "Act in the public interest and protect stakeholder trust.",
+    responseQuestion: "Apply critical thinking when identifying and evaluating alternatives to determine an appropriate course of action.",
   },
 ];
 

@@ -11,6 +11,8 @@ import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   id: z.string().optional(),
+  firmName: z.string().optional(),
+  principalName: z.string().optional(),
   clientName: z.string().min(1, "Client Name is required"),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
@@ -27,12 +29,34 @@ export interface AuditEngagementFormProps {
   defaultValues?: Partial<AuditEngagement>;
   onSubmit: (data: AuditEngagementFormData) => Promise<void>;
   title: string;
+  includeSupervisorFields?: boolean;
+  prefillFirmName?: string;
+  prefillPrincipalName?: string;
 }
 
-export function AuditEngagementForm({ open, onOpenChange, defaultValues, onSubmit, title }: AuditEngagementFormProps) {
-  const methods = useForm({
+export function AuditEngagementForm({
+  open,
+  onOpenChange,
+  defaultValues,
+  onSubmit,
+  title,
+  includeSupervisorFields = false,
+  prefillFirmName = "",
+  prefillPrincipalName = "",
+}: AuditEngagementFormProps) {
+  const methods = useForm<AuditEngagementFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: { id: undefined, clientName: "", startDate: "", endDate: "", role: "", areaOfWork: "", daysWorked: 0 }
+    defaultValues: {
+      id: undefined,
+      firmName: "",
+      principalName: "",
+      clientName: "",
+      startDate: "",
+      endDate: "",
+      role: "",
+      areaOfWork: "",
+      daysWorked: 0,
+    }
   });
 
   useEffect(() => {
@@ -40,6 +64,8 @@ export function AuditEngagementForm({ open, onOpenChange, defaultValues, onSubmi
       if (defaultValues) {
         methods.reset({
           id: defaultValues.id,
+          firmName: defaultValues.firmName || prefillFirmName,
+          principalName: defaultValues.principalName || prefillPrincipalName,
           clientName: defaultValues.clientName || "",
           startDate: defaultValues.startDate || "",
           endDate: defaultValues.endDate || "",
@@ -48,17 +74,38 @@ export function AuditEngagementForm({ open, onOpenChange, defaultValues, onSubmi
           daysWorked: defaultValues.daysWorked || 0,
         });
       } else {
-        methods.reset({ id: undefined, clientName: "", startDate: "", endDate: "", role: "", areaOfWork: "", daysWorked: 0 });
+        methods.reset({
+          id: undefined,
+          firmName: prefillFirmName,
+          principalName: prefillPrincipalName,
+          clientName: "",
+          startDate: "",
+          endDate: "",
+          role: "",
+          areaOfWork: "",
+          daysWorked: 0,
+        });
       }
     }
-  }, [open, defaultValues, methods]);
+  }, [open, defaultValues, methods, prefillFirmName, prefillPrincipalName]);
 
   const [isPending, setIsPending] = React.useState(false);
 
-  const handleSubmit = async (values: unknown) => {
+  const handleSubmit = async (values: AuditEngagementFormData) => {
+    if (includeSupervisorFields) {
+      if (!values.firmName?.trim()) {
+        methods.setError("firmName", { type: "manual", message: "Firm Name is required" });
+        return;
+      }
+      if (!values.principalName?.trim()) {
+        methods.setError("principalName", { type: "manual", message: "Principal Name is required" });
+        return;
+      }
+    }
+
     setIsPending(true);
     try {
-      await onSubmit(values as AuditEngagementFormData);
+      await onSubmit(values);
       onOpenChange(false);
     } catch (error) {
       console.error(error);
@@ -75,6 +122,21 @@ export function AuditEngagementForm({ open, onOpenChange, defaultValues, onSubmi
         </DialogHeader>
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(handleSubmit)} className="space-y-4 py-2 mt-2">
+            {includeSupervisorFields && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FormField name="firmName" label="Firm Name">
+                    <Input placeholder="Omega Solution" />
+                  </FormField>
+                </div>
+                <div>
+                  <FormField name="principalName" label="Principal Name">
+                    <Input placeholder="Sabbir Hosen FCA" />
+                  </FormField>
+                </div>
+              </div>
+            )}
+
             <FormField name="clientName" label="Client Name">
               <Input placeholder="Client XYZ" />
             </FormField>
