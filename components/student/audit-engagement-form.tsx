@@ -44,7 +44,7 @@ export function AuditEngagementForm({
   prefillFirmName = "",
   prefillPrincipalName = "",
 }: AuditEngagementFormProps) {
-  const methods = useForm<AuditEngagementFormData>({
+  const methods = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: undefined,
