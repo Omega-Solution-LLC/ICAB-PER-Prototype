@@ -1,0 +1,221 @@
+╔══════════════════════════════════════════════════════════════════╗
+║         ICAB PER — Complete Step-by-Step Usage Guide            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════
+ SECTION 1: FILE OVERVIEW — What Each File Does
+════════════════════════════════════════════════════════════
+
+  agent.md              → AI behavior rules. Read by AI every session.
+  project_map.md        → Every file in the project with descriptions.
+                          Saves tokens — AI reads this instead of exploring.
+  super_prompt.md       → Full project context: entities, business rules,
+                          API routes, tech stack, session progress tracker.
+  stages.md             → Visual roadmap of all 9 sessions + dependency graph.
+  continuous_prompt.md  → Template for resuming mid-session + code patterns.
+  session_01–09_*.md    → One file per session with exact tasks.
+
+════════════════════════════════════════════════════════════
+ SECTION 2: STARTING A NEW SESSION
+════════════════════════════════════════════════════════════
+
+  STEP 1: Open a new AI chat (Cursor, Copilot, Claude, etc.)
+
+  STEP 2: Paste this EXACT prompt (change XX to your session number):
+
+  ┌─────────────────────────────────────────────────────────┐
+  │ Read these files in order before doing anything:        │
+  │                                                         │
+  │ 1. agent.md                                             │
+  │ 2. project_map.md                                       │
+  │ 3. super_prompt.md                                      │
+  │ 4. session_XX_<name>.md                                 │
+  │                                                         │
+  │ Then begin working on the session tasks in order.        │
+  └─────────────────────────────────────────────────────────┘
+
+  Example for Session 01:
+  "Read agent.md, project_map.md, super_prompt.md, and
+   session_01_foundation.md then begin."
+
+  STEP 3: Let the AI work through the tasks. Each session file
+          has numbered tasks (e.g., 1.1, 1.2, ...) and a
+          verification checklist at the bottom.
+
+  STEP 4: When the session is done, tell the AI:
+          "Mark Session 01 as complete in super_prompt.md"
+
+════════════════════════════════════════════════════════════
+ SECTION 3: RESUMING MID-SESSION (after a break or crash)
+════════════════════════════════════════════════════════════
+
+  STEP 1: Open a new AI chat
+
+  STEP 2: Paste this template (fill in the blanks):
+
+  ┌─────────────────────────────────────────────────────────┐
+  │ Read agent.md, project_map.md, and super_prompt.md      │
+  │ for project context.                                    │
+  │                                                         │
+  │ I am continuing Session 03.                             │
+  │ Read session_03_practical.md.                           │
+  │                                                         │
+  │ Current progress:                                       │
+  │ - Backend: Tasks 3.1-3.3 done (CRUD endpoints working) │
+  │ - Frontend: Not started yet                             │
+  │ - Blockers: None                                        │
+  │                                                         │
+  │ Continue from: Task 3.5                                 │
+  └─────────────────────────────────────────────────────────┘
+
+  TIP: The more specific you are about what's done,
+       the less the AI needs to re-discover.
+
+════════════════════════════════════════════════════════════
+ SECTION 4: SESSION ORDER — Which to Do When
+════════════════════════════════════════════════════════════
+
+  MUST do in order:
+  ┌────────────────────────────────────────────────────────┐
+  │  Session 01 (Foundation)  →  FIRST, always             │
+  │  Session 02 (Demo Auth)   →  SECOND, always            │
+  └────────────────────────────────────────────────────────┘
+
+  Can do in ANY order (after 01 + 02 are done):
+  ┌────────────────────────────────────────────────────────┐
+  │  Session 03 (Practical Experience)                     │
+  │  Session 04 (Technical Development)                    │
+  │  Session 05 (Skills Development)                       │
+  │  Session 06 (Ethics Training + Application)            │
+  └────────────────────────────────────────────────────────┘
+
+  MUST do after ALL pillars (03-06) are done:
+  ┌────────────────────────────────────────────────────────┐
+  │  Session 07 (Admin Panel)   →  needs all pillar APIs   │
+  │  Session 08 (Polish/Test)   →  after admin is done     │
+  │  Session 09 (JWT Auth)      →  LAST, replaces demo     │
+  └────────────────────────────────────────────────────────┘
+
+════════════════════════════════════════════════════════════
+ SECTION 5: TOKEN-SAVING TIPS
+════════════════════════════════════════════════════════════
+
+  DO:
+  ✓ Always include project_map.md in your initial prompt
+  ✓ Be specific about where you left off
+  ✓ Tell the AI which files to edit (it knows from the map)
+  ✓ Use short follow-up messages: "Continue with task 3.6"
+
+  DON'T:
+  ✗ Don't ask AI to "explore the project" or "show me the structure"
+  ✗ Don't re-paste the full prompt mid-session — just continue
+  ✗ Don't ask AI to read files it doesn't need for the current task
+  ✗ Don't start a session without reading the 4 files first
+
+════════════════════════════════════════════════════════════
+ SECTION 6: WHAT EACH SESSION PRODUCES
+════════════════════════════════════════════════════════════
+
+  Session 01 → Backend .NET solution skeleton + frontend RTK store
+  Session 02 → Working login with demo users (no JWT yet)
+  Session 03 → /api/students/me/practical-periods + frontend wired
+  Session 04 → /api/technical/modules + responses + frontend wired
+  Session 05 → /api/skills/areas + records + frontend wired
+  Session 06 → /api/ethics/* (modules + apps) + frontend wired
+  Session 07 → /api/admin/* (students, approvals, dashboard) + frontend
+  Session 08 → /api/admin/reports + seed data + tests + polish
+  Session 09 → JWT tokens replace demo session tokens
+
+  After Session 08: Full working system with demo auth
+  After Session 09: Production-ready auth
+
+════════════════════════════════════════════════════════════
+ SECTION 7: VERIFYING EACH SESSION
+════════════════════════════════════════════════════════════
+
+  Every session file ends with a "Verification Checklist".
+  Before marking a session complete, run through it:
+
+  Backend checks:
+    > cd backend && dotnet build     (should pass with 0 errors)
+    > dotnet run                      (Swagger UI at localhost:5001)
+
+  Frontend checks:
+    > cd frontend && pnpm build      (should pass with 0 errors)
+    > pnpm dev                        (app at localhost:3000)
+
+  Then check the session-specific items (API responses, UI behavior, etc.)
+
+════════════════════════════════════════════════════════════
+ SECTION 8: IF SOMETHING GOES WRONG
+════════════════════════════════════════════════════════════
+
+  Problem: AI is exploring files instead of using project_map.md
+  Fix:     Remind it: "Read project_map.md — don't use list_dir"
+
+  Problem: AI lost context mid-session
+  Fix:     Use the continuous_prompt.md template to resume
+
+  Problem: Session task is unclear or blocked
+  Fix:     Ask AI: "What exactly does task X.Y require? List the
+           specific files to create/modify."
+
+  Problem: Build fails after AI changes
+  Fix:     Tell AI the exact error. It has all context from the
+           session file to fix it.
+
+  Problem: AI is making changes outside the current session scope
+  Fix:     Remind it: "Stay within Session XX only. Don't touch
+           files from other sessions."
+
+════════════════════════════════════════════════════════════
+ SECTION 9: QUICK REFERENCE — Copy-Paste Prompts
+════════════════════════════════════════════════════════════
+
+  --- Starting Session 01 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_01_foundation.md then begin.
+
+  --- Starting Session 02 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_02_auth.md then begin.
+
+  --- Starting Session 03 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_03_practical.md then begin.
+
+  --- Starting Session 04 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_04_technical.md then begin.
+
+  --- Starting Session 05 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_05_skills.md then begin.
+
+  --- Starting Session 06 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_06_ethics.md then begin.
+
+  --- Starting Session 07 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_07_admin.md then begin.
+
+  --- Starting Session 08 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_08_polish.md then begin.
+
+  --- Starting Session 09 ---
+  Read agent.md, project_map.md, super_prompt.md,
+  and session_09_jwt_auth.md then begin.
+
+  --- Marking Complete ---
+  Mark Session XX as complete in super_prompt.md.
+
+  --- Resuming ---
+  Read agent.md, project_map.md, and super_prompt.md.
+  I am continuing Session XX. Read session_XX_<name>.md.
+  Continue from: Task X.Y
+
+════════════════════════════════════════════════════════════
+ END OF GUIDE
+════════════════════════════════════════════════════════════
