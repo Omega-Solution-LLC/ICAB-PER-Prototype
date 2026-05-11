@@ -14,15 +14,13 @@ export interface SkillEntryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   skillName: string;
-  onSave: (data: Record<string, string>, periodLabel: string) => Promise<void>;
+  onSave: (data: Record<string, string>) => Promise<void>;
 }
 
 export function SkillEntryDialog({ open, onOpenChange, skillName, onSave }: SkillEntryDialogProps) {
   const handleSubmit = async (data: Record<string, string>) => {
     try {
-      // In a real app we'd also prompt for "periodLabel" in this form
-      // Here we assume "Year 1 H2" as default entry period for demo.
-      await onSave(data, "Year 1 H2");
+      await onSave(data);
       toast.success("Skill record submitted for approval");
       onOpenChange(false);
     } catch {

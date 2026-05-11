@@ -55,24 +55,40 @@ export function ActivityFeed() {
 
   // Technical Modules
   technicalModules.forEach(m => {
-    if (m.status === 'completed' && m.lastAttemptAt) {
+    if (m.lastAttemptAt && (m.status === 'submitted' || m.status === 'changes-requested')) {
       activities.push({
-        id: `tm-comp-${m.id}`,
-        title: `Completed Technical Module: ${m.name}`,
+        id: `tm-sub-${m.id}`,
+        title: `Submitted Technical Response: ${m.name}`,
         date: new Date(m.lastAttemptAt),
-        icon: BookOpen
+        icon: Send
+      });
+    }
+    if (m.approvedAt && m.status === 'approved') {
+      activities.push({
+        id: `tm-app-${m.id}`,
+        title: `Principal approved Technical Module: ${m.name}`,
+        date: new Date(m.approvedAt),
+        icon: CheckCircle2
       });
     }
   });
 
   // Ethics Modules
   ethicsModules.forEach(m => {
-    if (m.status === 'completed' && m.lastAttemptAt) {
+    if (m.lastAttemptAt && (m.status === 'submitted' || m.status === 'changes-requested')) {
       activities.push({
-        id: `em-comp-${m.id}`,
-        title: `Completed Ethics Module: ${m.name}`,
+        id: `em-sub-${m.id}`,
+        title: `Submitted Ethics Response: ${m.name}`,
         date: new Date(m.lastAttemptAt),
-        icon: Shield
+        icon: Send
+      });
+    }
+    if (m.approvedAt && m.status === 'approved') {
+      activities.push({
+        id: `em-app-${m.id}`,
+        title: `Principal approved Ethics Module: ${m.name}`,
+        date: new Date(m.approvedAt),
+        icon: CheckCircle2
       });
     }
   });

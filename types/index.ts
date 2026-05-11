@@ -33,7 +33,7 @@ export type AuditEngagement = {
   type?: 'statutory' | 'other' | 'non-audit';
   firmName?: string;
   principalName?: string;
-  clientName: string;
+  clientName?: string;
   startDate: string;
   endDate: string;
   role: string;
@@ -61,6 +61,7 @@ export type PracticalExperiencePeriod = {
 
 export type TechnicalModule = {
   id: string;
+  studentId?: string;
   name: string;
   description: string;
   iesReference: string;
@@ -109,6 +110,7 @@ export type EthicsTrainingProgress = {
 
 export type EthicsModule = {
   id: string;
+  studentId?: string;
   name: string;
   description: string;
   status: RecordStatus;
@@ -131,4 +133,4 @@ export type EthicsApplication = {
   approvedAt?: string;
 };
 
-export type ApprovalRecordType = 'practical' | 'skill' | 'ethics-module' | 'ethics-application';
+export type ApprovalRecordType = 'practical' | 'technical' | 'skill' | 'ethics-training' | 'ethics-application';

@@ -9,28 +9,82 @@ import { useAdminData } from '@/hooks/use-admin-data';
 import { Users, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { ApprovalsPreviewTable } from '@/components/admin/approvals-preview-table';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { format } from 'date-fns';
 
 export default function AdminDashboard() {
-  const { principal, students, allPracticalPeriods, allSkillRecords, allEthicsApplications } = useAdminData();
+  const { principal, students, allPracticalPeriods, allTechnicalModules, allSkillRecords, allEthicsModules, allEthicsApplications } = useAdminData();
 
-  const pendingApprovalsCount = 
+  const submittedApprovalsCount =
     allPracticalPeriods.filter(p => p.status === 'submitted').length +
+    allTechnicalModules.filter(m => m.status === 'submitted').length +
     allSkillRecords.filter(s => s.status === 'submitted').length +
+    allEthicsModules.filter(m => m.status === 'submitted').length +
     allEthicsApplications.filter(s => s.status === 'submitted').length;
 
-  const lineChartData = [
-    { month: 'Jan', approvals: 12 },
-    { month: 'Feb', approvals: 19 },
-    { month: 'Mar', approvals: 15 },
-    { month: 'Apr', approvals: 25 },
-    { month: 'May', approvals: 8 },
-  ];
+  const feedbackApprovalsCount =
+    allPracticalPeriods.filter(p => p.status === 'changes-requested').length +
+    allTechnicalModules.filter(m => m.status === 'changes-requested').length +
+    allSkillRecords.filter(s => s.status === 'changes-requested').length +
+    allEthicsModules.filter(m => m.status === 'changes-requested').length +
+    allEthicsApplications.filter(s => s.status === 'changes-requested').length;
+
+  const approvedApprovalsCount =
+    allPracticalPeriods.filter(p => p.status === 'approved').length +
+    allTechnicalModules.filter(m => m.status === 'approved').length +
+    allSkillRecords.filter(s => s.status === 'approved').length +
+    allEthicsModules.filter(m => m.status === 'approved').length +
+    allEthicsApplications.filter(s => s.status === 'approved').length;
+
+  const isPending = (status: string) => status === 'submitted' || status === 'changes-requested';
+
+  const submissionDates = [
+    ...allPracticalPeriods.map(p => p.submittedAt).filter(Boolean),
+    ...allTechnicalModules.map(m => m.lastAttemptAt).filter(Boolean),
+    ...allSkillRecords.map(s => s.submittedAt).filter(Boolean),
+    ...allEthicsModules.map(m => m.lastAttemptAt).filter(Boolean),
+    ...allEthicsApplications.map(a => a.submittedAt).filter(Boolean),
+  ] as string[];
+
+  const submissionsByMonth = submissionDates.reduce<Record<string, number>>((acc, date) => {
+    const monthKey = format(new Date(date), 'yyyy-MM');
+    acc[monthKey] = (acc[monthKey] || 0) + 1;
+    return acc;
+  }, {});
+
+  const monthKeys = Object.keys(submissionsByMonth)
+    .sort((a, b) => new Date(`${a}-01`).getTime() - new Date(`${b}-01`).getTime())
+    .slice(-5);
+
+  const lineChartData = monthKeys.map(key => ({
+    month: format(new Date(`${key}-01`), 'MMM'),
+    approvals: submissionsByMonth[key]
+  }));
 
   const barChartData = [
-    { name: 'Work Exp', completed: 45, pending: 12 },
-    { name: 'Technical', completed: 60, pending: 0 },
-    { name: 'Skills', completed: 20, pending: 15 },
-    { name: 'Ethics', completed: 30, pending: 5 }
+    {
+      name: 'Work Exp',
+      completed: allPracticalPeriods.filter(p => p.status === 'approved').length,
+      pending: allPracticalPeriods.filter(p => isPending(p.status)).length
+    },
+    {
+      name: 'Technical',
+      completed: allTechnicalModules.filter(m => m.status === 'approved').length,
+      pending: allTechnicalModules.filter(m => isPending(m.status)).length
+    },
+    {
+      name: 'Skills',
+      completed: allSkillRecords.filter(s => s.status === 'approved').length,
+      pending: allSkillRecords.filter(s => isPending(s.status)).length
+    },
+    {
+      name: 'Ethics',
+      completed:
+        allEthicsModules.filter(m => m.status === 'approved').length +
+        allEthicsApplications.filter(a => a.status === 'approved').length,
+      pending:
+        allEthicsModules.filter(m => isPending(m.status)).length +
+        allEthicsApplications.filter(a => isPending(a.status)).length
+    }
   ];
 
   return (
@@ -42,13 +96,13 @@ export default function AdminDashboard() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Total Supervised" value={students.length} icon={Users} trend="Active students" />
-        <StatCard label="Pending Approvals" value={pendingApprovalsCount} icon={Clock} variant={pendingApprovalsCount > 0 ? "warning" : "default"} />
-        <StatCard label="Approvals This Month" value={8} icon={CheckCircle} trend="+2 from last month" />
-        <StatCard label="Students At Risk" value={0} icon={AlertTriangle} variant="success" trend="No action needed" />
+        <StatCard label="Submitted" value={submittedApprovalsCount} icon={Clock} variant={submittedApprovalsCount > 0 ? "warning" : "default"} />
+        <StatCard label="Changes Requested" value={feedbackApprovalsCount} icon={AlertTriangle} variant={feedbackApprovalsCount > 0 ? "warning" : "default"} />
+        <StatCard label="Approved" value={approvedApprovalsCount} icon={CheckCircle} variant={approvedApprovalsCount > 0 ? "success" : "default"} />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <ChartCard title="Approval Velocity" subtitle="Submissions approved over time">
+        <ChartCard title="Submission Volume" subtitle="Student submissions across pillars">
           <div className="h-[280px] w-full pt-4 pr-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineChartData} margin={{ top: 5, right: 0, bottom: 5, left: -20 }}>

@@ -8,6 +8,7 @@ import { ApprovalQueueTable } from '@/components/admin/approval-queue-table';
 export default function ApprovalsQueuePage() {
   const [searchValue, setSearchValue] = useState("");
   const [pillarFilter, setPillarFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("submitted");
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10">
@@ -31,13 +32,29 @@ export default function ApprovalsQueuePage() {
                 { label: 'Work Experience', value: 'practical' },
                 { label: 'Technical Development', value: 'technical' },
                 { label: 'Professional Skill Development', value: 'skills' },
-                { label: 'Ethics Application', value: 'ethics' },
+                { label: 'Ethics Training', value: 'ethics-training' },
+                { label: 'Ethics Application', value: 'ethics-application' },
+              ]
+            },
+            {
+              id: 'status',
+              placeholder: 'Status',
+              value: statusFilter,
+              onChange: setStatusFilter,
+              options: [
+                { label: 'Submitted', value: 'submitted' },
+                { label: 'Changes Requested', value: 'changes-requested' },
+                { label: 'Approved', value: 'approved' },
               ]
             }
           ]}
         />
         
-        <ApprovalQueueTable />
+        <ApprovalQueueTable 
+          searchValue={searchValue}
+          pillarFilter={pillarFilter}
+          statusFilter={statusFilter}
+        />
       </div>
     </div>
   );

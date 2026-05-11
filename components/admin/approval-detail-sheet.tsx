@@ -13,32 +13,58 @@ export interface ApprovalDetailSheetProps {
 }
 
 export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailSheetProps) {
-  const { updatePracticalPeriod, updateSkillRecord, updateEthicsApplication, students } = useAdminData();
+  const { updatePracticalPeriod, updateSkillRecord, updateEthicsApplication, updateEthicsModule, updateTechnicalModule, students } = useAdminData();
   
   if (!record) return null;
 
   const student = students.find(s => s.id === record.studentId);
 
   const handleApprove = (feedback: string) => {
-    if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'approved', principalFeedback: feedback });
-    if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'approved', principalFeedback: feedback });
-    if (record.type === 'Ethics Application') updateEthicsApplication(record.id as string, { status: 'approved', principalFeedback: feedback });
-    
+    const approvedAt = new Date().toISOString().split('T')[0];
+
+    if (record.recordKind === 'practical') {
+      updatePracticalPeriod(record.id as string, { status: 'approved', principalFeedback: feedback, approvedAt });
+    }
+    if (record.recordKind === 'skills') {
+      updateSkillRecord(record.id as string, { status: 'approved', principalFeedback: feedback });
+    }
+    if (record.recordKind === 'ethics-application') {
+      updateEthicsApplication(record.id as string, { status: 'approved', principalFeedback: feedback, approvedAt });
+    }
+    if (record.recordKind === 'technical') {
+      updateTechnicalModule(record.id as string, { status: 'approved', employerFeedback: feedback, approvedAt });
+    }
+    if (record.recordKind === 'ethics-training') {
+      updateEthicsModule(record.id as string, { status: 'approved', employerFeedback: feedback, approvedAt });
+    }
+
     toast.success(`${record.type} approved successfully`);
     onOpenChange(false);
   };
 
   const handleRequestChanges = (feedback: string) => {
-    if (record.type === 'Practical Experience') updatePracticalPeriod(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
-    if (record.type === 'Skill Record') updateSkillRecord(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
-    if (record.type === 'Ethics Application') updateEthicsApplication(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
-    
+    if (record.recordKind === 'practical') {
+      updatePracticalPeriod(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
+    }
+    if (record.recordKind === 'skills') {
+      updateSkillRecord(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
+    }
+    if (record.recordKind === 'ethics-application') {
+      updateEthicsApplication(record.id as string, { status: 'changes-requested', principalFeedback: feedback });
+    }
+    if (record.recordKind === 'technical') {
+      updateTechnicalModule(record.id as string, { status: 'changes-requested', employerFeedback: feedback });
+    }
+    if (record.recordKind === 'ethics-training') {
+      updateEthicsModule(record.id as string, { status: 'changes-requested', employerFeedback: feedback });
+    }
+
     toast.success("Changes requested");
     onOpenChange(false);
   };
 
   const renderContent = () => {
-    if (record.type === 'Practical Experience') {
+    if (record.recordKind === 'practical') {
       return (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -75,7 +101,7 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
       );
     }
     
-    if (record.type === 'Skill Record') {
+    if (record.recordKind === 'skills') {
       const answers = record.guidedAnswers as Record<string, string>;
       return (
         <div className="space-y-4">
@@ -92,7 +118,7 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
       );
     }
 
-    if (record.type === 'Ethics Application') {
+    if (record.recordKind === 'ethics-application') {
       const answers = record.answers as Record<string, string>;
       return (
         <div className="space-y-4">
@@ -108,7 +134,44 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
         </div>
       );
     }
-    
+    if (record.recordKind === 'technical') {
+      return (
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm font-medium text-slate-500">Module</p>
+            <p className="text-slate-900 font-semibold">{record.name as string}</p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-lg border space-y-2">
+            <p className="text-sm font-medium text-slate-700">Question</p>
+            <p className="text-sm text-slate-600">{record.responseQuestion as string}</p>
+          </div>
+          <div className="bg-white p-4 rounded-lg border space-y-2">
+            <p className="text-sm font-medium text-slate-700">Student Response</p>
+            <p className="text-sm text-slate-600 whitespace-pre-wrap">{record.studentResponse as string}</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (record.recordKind === 'ethics-training') {
+      return (
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm font-medium text-slate-500">Module</p>
+            <p className="text-slate-900 font-semibold">{record.name as string}</p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-lg border space-y-2">
+            <p className="text-sm font-medium text-slate-700">Question</p>
+            <p className="text-sm text-slate-600">{record.responseQuestion as string}</p>
+          </div>
+          <div className="bg-white p-4 rounded-lg border space-y-2">
+            <p className="text-sm font-medium text-slate-700">Student Response</p>
+            <p className="text-sm text-slate-600 whitespace-pre-wrap">{record.studentResponse as string}</p>
+          </div>
+        </div>
+      );
+    }
+
     return <div className="text-slate-500 p-4 bg-slate-50 rounded-lg">Detailed view logic for {record.type} goes here.</div>;
   };
 
@@ -129,10 +192,10 @@ export function ApprovalDetailSheet({ record, onOpenChange }: ApprovalDetailShee
           {renderContent()}
           
           {/* Existing feedback thread — shown when changes were previously requested */}
-          {!!record.principalFeedback && (
+          {!!(record.feedback || record.principalFeedback || record.employerFeedback) && (
             <div className="border-t pt-4">
               <FeedbackThread
-                feedback={record.principalFeedback as string}
+                feedback={(record.feedback || record.principalFeedback || record.employerFeedback) as string}
                 principalName={student?.name ?? 'Principal'}
                 date="Previously sent"
               />

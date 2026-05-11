@@ -31,7 +31,6 @@ export default function PracticalWorkExperience() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isStatAuditFormOpen, setIsStatAuditFormOpen] = useState(false);
   const [isOtherAuditFormOpen, setIsOtherAuditFormOpen] = useState(false);
-  const [isNonAuditFormOpen, setIsNonAuditFormOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("work");
 
   // General PWE Calculation
@@ -128,20 +127,10 @@ export default function PracticalWorkExperience() {
 
   const handleAddOtherAudit = async (data: AuditEngagementFormData) => {
     addAuditEngagement({
-        studentId: activeStudentId,
-        type: 'other',
-        ...data
-    });
-    toast.success("Other Audit added successfully");
-};
-
-  const handleAddNonAudit = async (data: AuditEngagementFormData) => {
-    addAuditEngagement({
       studentId: activeStudentId,
-      type: "non-audit",
       ...data
     });
-    toast.success("Non-Audit added successfully");
+    toast.success("Entry added successfully");
   };
 
   return (
@@ -289,7 +278,7 @@ export default function PracticalWorkExperience() {
           }`}
           style={activeTab === "other" ? { backgroundColor: "var(--color-icab-red)" } : {}}
         >
-          Other Audit
+          Other Audit & Non Audit
         </button>
       </div>
 
@@ -368,7 +357,6 @@ export default function PracticalWorkExperience() {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Client Name</th>
                   <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Dates</th>
                   <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Role</th>
                   <th className="text-white text-xs font-semibold text-center px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Days</th>
@@ -378,14 +366,13 @@ export default function PracticalWorkExperience() {
               <tbody>
                 {statutoryAudits.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-gray-500 text-sm">
+                    <td colSpan={4} className="text-center py-8 text-gray-500 text-sm">
                       No statutory audit records found. Click "Add Statutory Audit" to log one.
                     </td>
                   </tr>
                 ) : (
                   statutoryAudits.map((a) => (
                     <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                      <td className="px-4 py-4 text-base text-left font-medium text-gray-900">{a.clientName}</td>
                       <td className="px-4 py-4 text-base text-left text-gray-700">{format(new Date(a.startDate), "MMM yyyy")} - {format(new Date(a.endDate), "MMM yyyy")}</td>
                       <td className="px-4 py-4 text-base text-left text-gray-700">{a.role}</td>
                       <td className="px-4 py-4 text-base text-center font-semibold text-gray-900">{a.daysWorked}</td>
@@ -403,29 +390,20 @@ export default function PracticalWorkExperience() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="bg-gray-50 px-5 py-4 border-b border-gray-200 flex items-center justify-between">
             <p className="text-sm font-bold text-gray-700 uppercase tracking-wide">
-              Other Audit Records
+              Other Audit & Non-Audit Records
             </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsOtherAuditFormOpen(true)}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
-                style={{ backgroundColor: "var(--color-icab-red)" }}>
-                + Add Other Audit
-              </button>
-              <button
-                onClick={() => setIsNonAuditFormOpen(true)}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
-                style={{ backgroundColor: "var(--color-icab-red)" }}>
-                + Add Non-Audit
-              </button>
-            </div>
+            <button
+              onClick={() => setIsOtherAuditFormOpen(true)}
+              className="px-4 py-2 text-sm font-medium text-white rounded-md hover:shadow-md transition-all hover:bg-icab-wine"
+              style={{ backgroundColor: "var(--color-icab-red)" }}>
+              + Add Other Audit / Non-Audit
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr>
                   <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Type</th>
-                  <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Client Name</th>
                   <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Dates</th>
                   <th className="text-white text-xs font-semibold text-left px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Role</th>
                   <th className="text-white text-xs font-semibold text-center px-4 py-3 border-b border-r border-slate-700 bg-slate-800">Days</th>
@@ -435,15 +413,14 @@ export default function PracticalWorkExperience() {
               <tbody>
                 {otherTabRecords.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-8 text-gray-500 text-sm">
-                      No records found. Click "Add Other Audit" or "Add Non-Audit" to log one.
+                    <td colSpan={5} className="text-center py-8 text-gray-500 text-sm">
+                      No records found. Click "Add Other Audit / Non-Audit" to log one.
                     </td>
                   </tr>
                 ) : (
                   otherTabRecords.map((a) => (
                     <tr key={a.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-4 text-base text-left text-gray-700">{a.type === "non-audit" ? "Non-Audit" : "Other Audit"}</td>
-                      <td className="px-4 py-4 text-base text-left font-medium text-gray-900">{a.clientName}</td>
                       <td className="px-4 py-4 text-base text-left text-gray-700">{format(new Date(a.startDate), "MMM yyyy")} - {format(new Date(a.endDate), "MMM yyyy")}</td>
                       <td className="px-4 py-4 text-base text-left text-gray-700">{a.role}</td>
                       <td className="px-4 py-4 text-base text-center font-semibold text-gray-900">{a.daysWorked}</td>
@@ -471,18 +448,13 @@ export default function PracticalWorkExperience() {
         includeSupervisorFields
         prefillFirmName={firmName}
         prefillPrincipalName={principalName}
+        fixedType="statutory"
       />
       <AuditEngagementForm
         open={isOtherAuditFormOpen}
         onOpenChange={setIsOtherAuditFormOpen}
         onSubmit={handleAddOtherAudit}
-        title="Other Audit"
-      />
-      <AuditEngagementForm
-        open={isNonAuditFormOpen}
-        onOpenChange={setIsNonAuditFormOpen}
-        onSubmit={handleAddNonAudit}
-        title="Non-Audit"
+        title="Other Audit & Non Audit"
       />
     </div>
   );

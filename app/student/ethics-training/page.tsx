@@ -31,10 +31,11 @@ export default function EthicsTrainingPage() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const approvedModulesCount = ethicsModules.filter(
-    (m) => m.status === "approved",
-  ).length;
-  const totalModules = ethicsModules.length;
+  const approvedModulesCount = ETHICS_MODULES_SEED.filter((moduleSeed) => {
+    const moduleQuestions = ethicsModules.filter((m) => m.name === moduleSeed.name);
+    return moduleQuestions.length > 0 && moduleQuestions.every((m) => m.status === "approved");
+  }).length;
+  const totalModules = ETHICS_MODULES_SEED.length;
 
   const modPct = totalModules > 0 ? Math.min((approvedModulesCount / totalModules) * 100, 100) : 0;
 
@@ -234,7 +235,7 @@ export default function EthicsTrainingPage() {
                         {isApproved ? (
                           <button
                             onClick={() => setApprovedPreview(module)}
-                            className="font-semibold text-gray-900 mb-1 text-left hover:text-blue-700 underline"
+                            className="font-semibold text-gray-900 mb-1 text-left hover:text-blue-700"
                           >
                             {module.responseQuestion}
                           </button>

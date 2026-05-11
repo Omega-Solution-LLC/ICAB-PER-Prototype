@@ -16,6 +16,24 @@ const PERIODS = [
   "Year 3 - H2"
 ];
 
+const ETHICS_QUESTIONS = [
+  {
+    id: "q1",
+    label: "Ethical Leadership",
+    description: "Describe an instance where you navigated an ethical dilemma with integrity.",
+  },
+  {
+    id: "q2",
+    label: "Independence",
+    description: "Provide an example where you assessed and maintained independence in fact and appearance during an engagement.",
+  },
+  {
+    id: "q3",
+    label: "Professional Skepticism",
+    description: "Explain a scenario where you applied professional skepticism effectively.",
+  },
+];
+
 export default function EthicsApplicationPage() {
   const { ethicsApplications, addEthicsApplication } = useStudentData();
   const [selectedPeriod, setSelectedPeriod] = useState(PERIODS[1]); // Default to Year 1 - H2
@@ -91,18 +109,31 @@ export default function EthicsApplicationPage() {
         ) : (
           <div className="border border-gray-200 mb-6 rounded-lg overflow-hidden shadow-sm">
             <div className="bg-gray-700 text-white flex justify-between items-center px-5 py-3 text-sm font-semibold tracking-wide">
-              <span>Application Submitted - {selectedPeriod}</span>
+              <span>
+                {currentApplication.status === 'approved' 
+                  ? `Application Approved - ${selectedPeriod} (${new Date(currentApplication.approvedAt!).toLocaleDateString()})`
+                  : `Application Submitted - ${selectedPeriod}`
+                }
+              </span>
               <StatusBadge status={currentApplication.status} />
             </div>
             <div className="bg-gray-50 px-5 py-5 space-y-6">
-              {Object.entries(currentApplication.answers).map(([qId, answer], i) => (
-                <div key={qId} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-2">Question {i + 1} Response</h4>
-                  <p className="text-sm text-gray-700 leading-relaxed bg-white p-4 border border-gray-100 rounded-md shadow-sm">
-                    {answer}
-                  </p>
-                </div>
-              ))}
+              {Object.entries(currentApplication.answers).map(([qId, answer]) => {
+                const question = ETHICS_QUESTIONS.find(q => q.id === qId);
+                return (
+                  <div key={qId} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                    <h4 className="font-semibold text-gray-900 text-sm mb-2">
+                      {question?.label || `Question ${qId}`}
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-3 italic">
+                      {question?.description}
+                    </p>
+                    <p className="text-sm text-gray-700 leading-relaxed bg-white p-4 border border-gray-100 rounded-md shadow-sm">
+                      {answer}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -124,6 +155,7 @@ export default function EthicsApplicationPage() {
                   <tr className="border-b border-gray-100 bg-gray-50/50">
                     <th className="px-5 py-3 font-semibold text-gray-700">Period</th>
                     <th className="px-5 py-3 font-semibold text-gray-700">Submitted Date</th>
+                    <th className="px-5 py-3 font-semibold text-gray-700">Approved Date</th>
                     <th className="px-5 py-3 font-semibold text-gray-700">Status</th>
                   </tr>
                 </thead>
@@ -132,6 +164,12 @@ export default function EthicsApplicationPage() {
                     <tr key={app.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                       <td className="px-5 py-3 font-medium text-gray-900">{app.periodLabel}</td>
                       <td className="px-5 py-3 text-gray-600">{app.submittedAt || "N/A"}</td>
+                      <td className="px-5 py-3 text-gray-600">
+                        {app.status === 'approved' && app.approvedAt 
+                          ? new Date(app.approvedAt).toLocaleDateString() 
+                          : "-"
+                        }
+                      </td>
                       <td className="px-5 py-3">
                         <StatusBadge status={app.status} />
                       </td>

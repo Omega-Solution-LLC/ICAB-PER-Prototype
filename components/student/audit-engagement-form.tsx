@@ -13,7 +13,7 @@ const formSchema = z.object({
   id: z.string().optional(),
   firmName: z.string().optional(),
   principalName: z.string().optional(),
-  clientName: z.string().min(1, "Client Name is required"),
+  type: z.enum(['statutory', 'other', 'non-audit']).optional(),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().min(1, "End date is required"),
   role: z.string().min(1, "Role is required"),
@@ -32,6 +32,7 @@ export interface AuditEngagementFormProps {
   includeSupervisorFields?: boolean;
   prefillFirmName?: string;
   prefillPrincipalName?: string;
+  fixedType?: AuditEngagement['type'];
 }
 
 export function AuditEngagementForm({
@@ -43,6 +44,7 @@ export function AuditEngagementForm({
   includeSupervisorFields = false,
   prefillFirmName = "",
   prefillPrincipalName = "",
+  fixedType,
 }: AuditEngagementFormProps) {
   const methods = useForm({
     resolver: zodResolver(formSchema),
@@ -50,7 +52,7 @@ export function AuditEngagementForm({
       id: undefined,
       firmName: "",
       principalName: "",
-      clientName: "",
+      type: fixedType || "other",
       startDate: "",
       endDate: "",
       role: "",
@@ -66,7 +68,7 @@ export function AuditEngagementForm({
           id: defaultValues.id,
           firmName: defaultValues.firmName || prefillFirmName,
           principalName: defaultValues.principalName || prefillPrincipalName,
-          clientName: defaultValues.clientName || "",
+          type: defaultValues.type || fixedType || "other",
           startDate: defaultValues.startDate || "",
           endDate: defaultValues.endDate || "",
           role: defaultValues.role || "",
@@ -78,7 +80,7 @@ export function AuditEngagementForm({
           id: undefined,
           firmName: prefillFirmName,
           principalName: prefillPrincipalName,
-          clientName: "",
+          type: fixedType || "other",
           startDate: "",
           endDate: "",
           role: "",
@@ -87,7 +89,7 @@ export function AuditEngagementForm({
         });
       }
     }
-  }, [open, defaultValues, methods, prefillFirmName, prefillPrincipalName]);
+  }, [open, defaultValues, methods, prefillFirmName, prefillPrincipalName, fixedType]);
 
   const [isPending, setIsPending] = React.useState(false);
 
@@ -103,9 +105,14 @@ export function AuditEngagementForm({
       }
     }
 
+    const payload = {
+      ...values,
+      type: values.type || fixedType,
+    };
+
     setIsPending(true);
     try {
-      await onSubmit(values);
+      await onSubmit(payload as AuditEngagementFormData);
       onOpenChange(false);
     } catch (error) {
       console.error(error);
@@ -137,9 +144,14 @@ export function AuditEngagementForm({
               </div>
             )}
 
-            <FormField name="clientName" label="Client Name">
-              <Input placeholder="Client XYZ" />
-            </FormField>
+            {!fixedType && (
+              <FormField name="type" label="Entry Type">
+                <select className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 transition focus:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-200" defaultValue="other">
+                  <option value="other">Other Audit</option>
+                  <option value="non-audit">Non-Audit</option>
+                </select>
+              </FormField>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>

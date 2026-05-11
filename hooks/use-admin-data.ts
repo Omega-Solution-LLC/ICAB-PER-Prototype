@@ -22,5 +22,6 @@ export function useAdminData() {
     updateSkillRecord: dataContext.updateSkillRecord,
     updateEthicsApplication: dataContext.updateEthicsApplication,
     updateEthicsModule: dataContext.updateEthicsModule,
+    updateTechnicalModule: dataContext.updateTechnicalModule,
   };
 }

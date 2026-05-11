@@ -5,14 +5,24 @@ import { SkillEntryTimeline } from "@/components/student/skill-entry-timeline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStudentData } from "@/hooks/use-student-data";
 import { SKILL_AREAS_SEED } from "@/lib/constants";
-import { Plus } from "lucide-react";
+import { Plus, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
+
+const PERIODS = [
+  "Year 1 - H1",
+  "Year 1 - H2",
+  "Year 2 - H1",
+  "Year 2 - H2",
+  "Year 3 - H1",
+  "Year 3 - H2"
+];
 
 export default function SkillsDevelopmentPage() {
   const { student, skillRecords, addSkillRecord } = useStudentData();
   const [activeTabId, setActiveTabId] = useState(SKILL_AREAS_SEED[0].id);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState(PERIODS[1]); // Default to Year 1 - H2
 
   const activeSkill = SKILL_AREAS_SEED.find((s) => s.id === activeTabId);
 
@@ -22,7 +32,6 @@ export default function SkillsDevelopmentPage() {
 
   const handleSaveSkill = async (
     data: Record<string, string>,
-    periodLabel: string,
   ) => {
     if (!student || !activeSkill) return;
 
@@ -32,7 +41,7 @@ export default function SkillsDevelopmentPage() {
     addSkillRecord({
       studentId: student.id,
       skillAreaId: activeSkill.id,
-      periodLabel,
+      periodLabel: selectedPeriod,
       guidedAnswers: data,
     });
   };
@@ -46,14 +55,41 @@ export default function SkillsDevelopmentPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* ── Title & Progress Bar ── */}
+        {/* ── Title ── */}
+        <h1
+          className="text-3xl font-semibold mb-6"
+          style={{ color: "var(--color-icab-red)" }}>
+          Professional Skill Development
+        </h1>
+
+        {/* ── Period Selection ── */}
+        <div className="border border-emerald-200 rounded-lg bg-emerald-50 px-5 py-4 mb-6 flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-emerald-900">
+                Select Period for Skill Entries
+              </h3>
+              <p className="text-sm text-emerald-700 mt-1">
+                Choose the period for which you want to log skill development entries. Each entry will be associated with the selected period.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 bg-white border border-emerald-200 rounded-md p-1 shadow-sm">
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="text-sm font-semibold text-emerald-900 bg-transparent border-none outline-none cursor-pointer px-2 py-1"
+            >
+              {PERIODS.map(p => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* ── Progress Bar ── */}
         <div className="mb-8">
-          <h1
-            className="text-3xl font-semibold mb-4"
-            style={{ color: "var(--color-icab-red)" }}>
-            Professional Skill Development
-          </h1>
-          
           <div className="flex items-center gap-6 bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
             <div className="flex-1">
               <div className="flex justify-between mb-2">

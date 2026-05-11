@@ -16,10 +16,10 @@ export function useStudentData() {
   const principal = student ? dataContext.principal : undefined;
 
   const myPracticalPeriods = dataContext.practicalPeriods.filter(p => p.studentId === studentId);
-  const myTechnicalModules = dataContext.technicalModules; // In prototype, modules are shared for the demo student
+  const myTechnicalModules = dataContext.technicalModules.filter(m => !m.studentId || m.studentId === studentId);
   const mySkillRecords = dataContext.skillRecords.filter(s => s.studentId === studentId);
   const myEthicsProgress = dataContext.ethicsProgress;
-  const myEthicsModules = dataContext.ethicsModules;
+  const myEthicsModules = dataContext.ethicsModules.filter(m => !m.studentId || m.studentId === studentId);
   const myEthicsApplications = dataContext.ethicsApplications.filter(e => e.studentId === studentId);
   const myAuditEngagements = dataContext.auditEngagements?.filter(a => a.studentId === studentId) || [];
 
